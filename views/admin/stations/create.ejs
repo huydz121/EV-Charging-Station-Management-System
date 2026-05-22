@@ -1,0 +1,86 @@
+﻿
+<div class="mb-4">
+  <a href="/admin/stations" style="font-size: 13px; color: var(--text-muted);"><i class="fas fa-arrow-left"></i> Quay lại</a>
+  <h2 style="font-size: 20px; font-weight: 700; margin-top: 12px;">Thêm trạm sạc mới</h2>
+</div>
+
+<div class="admin-form">
+  <form action="/admin/stations" method="POST">
+    <div class="form-group">
+      <label class="ev-label">Tên trạm sạc *</label>
+      <input type="text" name="name" class="ev-input" required placeholder="VD: Trạm EV Quận 1">
+    </div>
+
+    <div class="form-group">
+      <label class="ev-label">Địa chỉ *</label>
+      <input type="text" name="address" class="ev-input" required placeholder="VD: 123 Nguyễn Huệ, Q.1, TP.HCM">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="ev-label">Vĩ độ (Latitude)</label>
+        <input type="number" step="any" name="lat" class="ev-input" value="10.7769" placeholder="10.7769">
+      </div>
+      <div class="form-group">
+        <label class="ev-label">Kinh độ (Longitude)</label>
+        <input type="number" step="any" name="lng" class="ev-input" value="106.7009" placeholder="106.7009">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="ev-label">Giá điện (VNĐ/kWh) *</label>
+      <input type="number" name="pricePerKwh" class="ev-input" required value="5000" placeholder="5000">
+    </div>
+
+    <div class="form-group">
+      <label class="ev-label">Mô tả</label>
+      <textarea name="description" class="ev-input" rows="3" placeholder="Mô tả về trạm sạc..."></textarea>
+    </div>
+
+    <!-- Connectors -->
+    <div class="form-group">
+      <label class="ev-label">Trụ sạc</label>
+      <div id="connectorList">
+        <div class="d-flex gap-2 mb-2">
+          <select name="connectors[type]" class="ev-select" style="flex: 1;">
+            <option value="Type2">Type 2</option>
+            <option value="CCS">CCS</option>
+            <option value="CHAdeMO">CHAdeMO</option>
+            <option value="Type1">Type 1</option>
+            <option value="Tesla">Tesla</option>
+          </select>
+          <input type="number" name="connectors[power]" class="ev-input" style="width: 120px;" value="22" placeholder="kW">
+        </div>
+      </div>
+      <button type="button" class="btn-ev btn-ev-outline btn-ev-sm" onclick="addConnector()">
+        <i class="fas fa-plus"></i> Thêm trụ
+      </button>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn-ev btn-ev-primary">
+        <i class="fas fa-save"></i> Tạo trạm sạc
+      </button>
+      <a href="/admin/stations" class="btn-ev btn-ev-outline">Hủy</a>
+    </div>
+  </form>
+</div>
+
+<script>
+function addConnector() {
+  const html = `<div class="d-flex gap-2 mb-2">
+    <select name="connectors[type]" class="ev-select" style="flex: 1;">
+      <option value="Type2">Type 2</option>
+      <option value="CCS">CCS</option>
+      <option value="CHAdeMO">CHAdeMO</option>
+      <option value="Type1">Type 1</option>
+      <option value="Tesla">Tesla</option>
+    </select>
+    <input type="number" name="connectors[power]" class="ev-input" style="width: 120px;" value="22" placeholder="kW">
+    <button type="button" class="btn-ev btn-ev-danger btn-ev-sm" onclick="this.parentElement.remove()">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>`;
+  document.getElementById('connectorList').insertAdjacentHTML('beforeend', html);
+}
+</script>

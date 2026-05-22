@@ -1,0 +1,66 @@
+<div class="admin-topbar">
+  <div class="topbar-left">
+    <button class="topbar-icon-btn d-md-none" id="toggleSidebar" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h1><%= typeof title !== 'undefined' ? title : 'Dashboard' %></h1>
+  </div>
+
+  <div class="topbar-right">
+    <div class="topbar-search d-none d-md-block">
+      <i class="fas fa-search"></i>
+      <input type="text" id="adminSearchInput" placeholder="Tìm kiếm trạm sạc, người dùng..." onkeydown="if(event.key === 'Enter') { window.location.href = '/admin/stations?search=' + encodeURIComponent(this.value); }">
+    </div>
+
+    <div class="dropdown">
+      <button class="topbar-icon-btn" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell"></i>
+        <% if (typeof adminNotifications !== 'undefined' && adminNotifications && adminNotifications.length > 0) { %>
+          <span class="badge-dot"></span>
+        <% } %>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow" style="min-width: 300px; max-height: 400px; overflow-y: auto;">
+        <li><h6 class="dropdown-header">Lịch sử hoạt động</h6></li>
+        <% if (typeof adminNotifications !== 'undefined' && adminNotifications && adminNotifications.length > 0) { %>
+          <% adminNotifications.forEach(function(noti) { %>
+            <li>
+              <a class="dropdown-item" href="javascript:void(0)" style="white-space: normal; padding: 10px 15px; border-bottom: 1px solid var(--border-color);">
+                <div style="font-size: 13px; font-weight: 500; color: var(--text-color);"><%= noti.text %></div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                  <i class="far fa-clock"></i> 
+                  <%= new Date(noti.time).toLocaleTimeString('vi-VN') %> - <%= new Date(noti.time).toLocaleDateString('vi-VN') %>
+                </div>
+              </a>
+            </li>
+          <% }) %>
+          <li><hr class="dropdown-divider m-0"></li>
+          <li><a class="dropdown-item text-center text-primary" href="/admin/clear-notifications" style="padding: 10px;">Xóa lịch sử</a></li>
+        <% } else { %>
+          <li><div class="dropdown-item text-muted text-center py-3">Chưa có hoạt động nào</div></li>
+        <% } %>
+      </ul>
+    </div>
+
+    <div class="dropdown">
+      <button class="topbar-icon-btn" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-cog"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow">
+        <li><a class="dropdown-item" href="/admin/profile"><i class="fas fa-user me-2"></i> Hồ sơ tài khoản</a></li>
+        <li><a class="dropdown-item" href="/admin/settings"><i class="fas fa-sliders-h me-2"></i> Cài đặt hệ thống</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a></li>
+      </ul>
+    </div>
+
+    <div class="topbar-avatar">
+      <div class="topbar-avatar-placeholder">
+        <%= user && user.fullName ? user.fullName.charAt(0).toUpperCase() : 'A' %>
+      </div>
+      <div class="d-none d-md-block">
+        <div style="font-size: 13px; font-weight: 600;"><%= user ? user.fullName : 'Admin' %></div>
+        <div style="font-size: 11px; color: var(--text-muted);">Quản trị viên</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<nav class="bottom-nav">
+  <a href="/customer" class="bottom-nav-item <%= activePage === 'home' ? 'active' : '' %>" id="nav-home">
+    <div class="bottom-nav-icon"><i class="fas fa-home"></i></div>
+    <span class="bottom-nav-label">Trang chủ</span>
+  </a>
+  <a href="/customer/map" class="bottom-nav-item <%= activePage === 'map' ? 'active' : '' %>" id="nav-map">
+    <div class="bottom-nav-icon"><i class="fas fa-map-marker-alt"></i></div>
+    <span class="bottom-nav-label">Tìm trạm</span>
+  </a>
+  <a href="/customer/history" class="bottom-nav-item <%= activePage === 'history' ? 'active' : '' %>" id="nav-history">
+    <div class="bottom-nav-icon"><i class="fas fa-history"></i></div>
+    <span class="bottom-nav-label">Lịch sử</span>
+  </a>
+  <a href="/customer/wallet" class="bottom-nav-item <%= activePage === 'wallet' ? 'active' : '' %>" id="nav-wallet">
+    <div class="bottom-nav-icon"><i class="fas fa-wallet"></i></div>
+    <span class="bottom-nav-label">Ví</span>
+  </a>
+  <a href="/customer/profile" class="bottom-nav-item <%= activePage === 'profile' ? 'active' : '' %>" id="nav-profile">
+    <div class="bottom-nav-icon"><i class="fas fa-user"></i></div>
+    <span class="bottom-nav-label">Tài khoản</span>
+  </a>
+</nav>

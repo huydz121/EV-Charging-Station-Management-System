@@ -1,0 +1,114 @@
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 style="font-size: 20px; font-weight: 700;">Danh sách trạm sạc</h2>
+    <p style="color: var(--text-muted); font-size: 13px;"><%= stations.length %> trạm sạc</p>
+  </div>
+  <a href="/admin/stations/create" class="btn-ev btn-ev-primary">
+    <i class="fas fa-plus"></i> Thêm trạm sạc
+  </a>
+</div>
+
+<div class="station-grid">
+  <% if (stations && stations.length > 0) { %>
+    <% stations.forEach(function(station) { %>
+      <div class="station-card">
+        <div class="station-card-header">
+          <h4><%= station.name %></h4>
+          <span class="ev-badge ev-badge-<%= station.status === 'active' ? 'success' : station.status === 'maintenance' ? 'warning' : 'danger' %>">
+            <%= station.status === 'active' ? 'Hoạt động' : station.status === 'maintenance' ? 'Bảo trì' : 'Ngừng' %>
+          </span>
+        </div>
+        <div class="station-card-body">
+          <p><i class="fas fa-map-marker-alt"></i> <%= station.address %></p>
+          <p><i class="fas fa-tag"></i> <%= station.pricePerKwh ? station.pricePerKwh.toLocaleString('vi-VN') : '0' %>đ/kWh</p>
+          <p><i class="fas fa-plug"></i> <%= station.connectors ? station.connectors.length : 0 %> trụ sạc</p>
+          <div class="station-connectors">
+            <% if (station.connectors) { %>
+              <% station.connectors.forEach(function(c, i) { %>
+                <span class="connector-chip <%= c.status === 'available' ? 'available' : c.status === 'in_use' ? 'in-use' : '' %>">
+                  #<%= i+1 %> <%= c.type %> (<%= c.power %>kW)
+                </span>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+        <div class="station-card-actions">
+          <a href="/admin/stations/<%= station._id %>/edit" class="btn-ev btn-ev-outline btn-ev-sm">
+            <i class="fas fa-edit"></i> Sửa
+          </a>
+          <form action="/admin/stations/<%= station._id %>?_method=DELETE" method="POST" class="d-inline delete-station-form">
+            <button type="button" class="btn-ev btn-ev-danger btn-ev-sm" onclick="confirmDelete(this.parentElement)">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+          </form>
+        </div>
+      </div>
+    <% }) %>
+  <% } else { %>
+    <div style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--text-muted);">
+      <i class="fas fa-charging-station" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+      <p>Chưa có trạm sạc nào</p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const msg = urlParams.get('msg');
+  
+  if (msg) {
+    let title = '';
+    let text = '';
+    if (msg === 'created') {
+      title = 'Thành công!';
+      text = 'Đã thêm trạm sạc mới vào hệ thống.';
+    } else if (msg === 'updated') {
+      title = 'Cập nhật xong!';
+      text = 'Thông tin trạm sạc đã được lưu.';
+    } else if (msg === 'deleted') {
+      title = 'Đã xóa!';
+      text = 'Trạm sạc đã bị xóa khỏi hệ thống.';
+    }
+    
+    if (title && typeof Swal !== 'undefined') {
+      Swal.fire({
+        icon: 'success',
+        title: title,
+        text: text,
+        timer: 3000,
+        showConfirmButton: false
+      });
+    } else if (title && window.showToast) {
+      window.showToast(text, 'success');
+    }
+    
+    // Xóa param trên URL để không bị hiện lại khi F5
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+});
+
+function confirmDelete(formElement) {
+  if (typeof Swal !== 'undefined') {
+    Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: "Hành động này sẽ xóa vĩnh viễn trạm sạc này!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Vâng, Xóa ngay!',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        formElement.submit();
+      }
+    });
+  } else {
+    if (confirm('Bạn có chắc muốn xóa trạm sạc này? Việc này không thể hoàn tác!')) {
+      formElement.submit();
+    }
+  }
+}
+</script>

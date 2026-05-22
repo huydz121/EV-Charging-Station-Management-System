@@ -1,0 +1,55 @@
+﻿
+<div class="mb-4">
+  <a href="/admin/stations" style="font-size: 13px; color: var(--text-muted);"><i class="fas fa-arrow-left"></i> Quay lại</a>
+  <h2 style="font-size: 20px; font-weight: 700; margin-top: 12px;">Sửa trạm sạc: <%= station.name %></h2>
+</div>
+
+<div class="admin-form">
+  <form action="/admin/stations/<%= station._id %>?_method=PUT" method="POST">
+    <div class="form-group">
+      <label class="ev-label">Tên trạm sạc *</label>
+      <input type="text" name="name" class="ev-input" required value="<%= station.name %>">
+    </div>
+
+    <div class="form-group">
+      <label class="ev-label">Địa chỉ *</label>
+      <input type="text" name="address" class="ev-input" required value="<%= station.address %>">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="ev-label">Vĩ độ</label>
+        <input type="number" step="any" name="lat" class="ev-input" value="<%= station.location ? station.location.coordinates[1] : '' %>">
+      </div>
+      <div class="form-group">
+        <label class="ev-label">Kinh độ</label>
+        <input type="number" step="any" name="lng" class="ev-input" value="<%= station.location ? station.location.coordinates[0] : '' %>">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="ev-label">Giá điện (VNĐ/kWh)</label>
+        <input type="number" name="pricePerKwh" class="ev-input" value="<%= station.pricePerKwh %>">
+      </div>
+      <div class="form-group">
+        <label class="ev-label">Trạng thái</label>
+        <select name="status" class="ev-select">
+          <option value="active" <%= station.status === 'active' ? 'selected' : '' %>>Hoạt động</option>
+          <option value="inactive" <%= station.status === 'inactive' ? 'selected' : '' %>>Ngừng hoạt động</option>
+          <option value="maintenance" <%= station.status === 'maintenance' ? 'selected' : '' %>>Bảo trì</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="ev-label">Mô tả</label>
+      <textarea name="description" class="ev-input" rows="3"><%= station.description || '' %></textarea>
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <button type="submit" class="btn-ev btn-ev-primary"><i class="fas fa-save"></i> Lưu thay đổi</button>
+      <a href="/admin/stations" class="btn-ev btn-ev-outline">Hủy</a>
+    </div>
+  </form>
+</div>

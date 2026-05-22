@@ -1,0 +1,39 @@
+<% if (user) { %>
+<div class="app-header">
+  <div class="app-header-left">
+    <div class="app-header-avatar">
+      <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+    </div>
+    <div>
+      <div class="app-header-greeting">Xin chào 👋</div>
+      <div class="app-header-name"><%= user.fullName %></div>
+    </div>
+  </div>
+  <div class="app-header-right">
+    <button class="topbar-icon-btn" onclick="location.href='/customer/map'">
+      <i class="fas fa-search"></i>
+    </button>
+    <div class="dropdown d-inline-block">
+      <button class="topbar-icon-btn" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-bell"></i>
+        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="width: 10px; height: 10px; margin-top: 5px; margin-left: -5px;"></span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="width: 320px; padding: 0; background: var(--bg-card); border-color: var(--border); margin-top: 10px;">
+        <li style="padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px; color: var(--text-primary);">Thông báo (2 mới)</li>
+        <li>
+          <a class="dropdown-item" href="#" style="padding: 12px 16px; border-bottom: 1px solid var(--border); background: rgba(0,230,118,0.08); white-space: normal;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Chào mừng bạn mới! 🎉</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Tài khoản của bạn đã được kích hoạt thành công. Hãy nạp ngay tối thiểu 200k để bắt đầu sạc!</div>
+          </a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="#" style="padding: 12px 16px; white-space: normal;">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Ưu đãi nạp tiền</div>
+            <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">Nạp từ 200k tặng ngay 10% giá trị nạp. Áp dụng đến hết tháng này!</div>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>

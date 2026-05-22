@@ -1,0 +1,94 @@
+
+<!-- Balance Card -->
+<div class="balance-card">
+  <div class="balance-card-label">Số dư ví</div>
+  <div class="balance-card-value"><%= user && user.balance ? user.balance.toLocaleString('vi-VN') : '0' %>đ</div>
+  <div class="balance-card-unit">
+    <% if (user && user.balance >= 200000) { %>
+      <span style="color: var(--accent);"><i class="fas fa-bolt"></i> Sẵn sàng sạc</span>
+    <% } else { %>
+      <span style="color: var(--warning);"><i class="fas fa-exclamation-triangle"></i> Số dư không đủ sạc (< 200k)</span>
+    <% } %>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+  <a href="/customer/map" class="quick-action-item">
+    <div class="quick-action-icon"><i class="fas fa-map-marker-alt"></i></div>
+    <span class="quick-action-label">Tìm trạm</span>
+  </a>
+  <a href="#" class="quick-action-item" onclick="alert('Tính năng quét QR đang phát triển')">
+    <div class="quick-action-icon"><i class="fas fa-qrcode"></i></div>
+    <span class="quick-action-label">Quét QR</span>
+  </a>
+  <a href="/customer/map" class="quick-action-item">
+    <div class="quick-action-icon"><i class="fas fa-bolt"></i></div>
+    <span class="quick-action-label">Sạc ngay</span>
+  </a>
+  <a href="/customer/history" class="quick-action-item">
+    <div class="quick-action-icon"><i class="fas fa-clock-rotate-left"></i></div>
+    <span class="quick-action-label">Lịch sử</span>
+  </a>
+</div>
+
+<!-- Nearby Stations -->
+<div class="section-title">
+  <h3><i class="fas fa-charging-station" style="color: var(--accent); margin-right: 8px;"></i>Trạm sạc gần đây</h3>
+  <a href="/customer/map">Xem tất cả <i class="fas fa-chevron-right" style="font-size: 10px;"></i></a>
+</div>
+
+<div class="station-list">
+  <% if (typeof stations !== 'undefined' && stations && stations.length > 0) { %>
+    <% stations.forEach(function(station, index) { %>
+      <a href="/customer/stations/<%= station._id %>" class="station-item" style="animation-delay: <%= index * 0.1 %>s;" id="station-<%= station._id %>">
+        <div class="station-item-icon">
+          <i class="fas fa-charging-station"></i>
+        </div>
+        <div class="station-item-info">
+          <div class="station-item-name"><%= station.name %></div>
+          <div class="station-item-address"><%= station.address %></div>
+          <div class="station-item-meta">
+            <% 
+              var available = 0;
+              if (station.connectors) {
+                station.connectors.forEach(function(c) { if (c.status === 'available') available++; });
+              }
+            %>
+            <span class="station-meta-chip meta-chip-available">
+              <i class="fas fa-circle" style="font-size: 6px;"></i> <%= available %>/<%= station.connectors ? station.connectors.length : 0 %> trống
+            </span>
+            <span class="station-meta-chip meta-chip-price">
+              <i class="fas fa-tag"></i> <%= station.pricePerKwh ? station.pricePerKwh.toLocaleString('vi-VN') : '0' %>đ/kWh
+            </span>
+            <% if (station.rating > 0) { %>
+              <span class="station-meta-chip meta-chip-rating">
+                <i class="fas fa-star"></i> <%= station.rating.toFixed(1) %>
+              </span>
+            <% } %>
+          </div>
+        </div>
+      </a>
+    <% }) %>
+  <% } else { %>
+    <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+      <i class="fas fa-charging-station" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+      <p>Chưa có trạm sạc nào</p>
+      <a href="/customer/map" class="btn-ev btn-ev-outline btn-ev-sm" style="margin-top: 12px;">
+        <i class="fas fa-search"></i> Tìm trạm sạc
+      </a>
+    </div>
+  <% } %>
+</div>
+
+<!-- Promo Banner -->
+<div style="margin: 24px 20px;">
+  <div class="ev-card-glow" style="text-align: center; padding: 28px;">
+    <div style="font-size: 40px; margin-bottom: 12px;">🎉</div>
+    <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 8px;">Nạp ví nhận ưu đãi!</h4>
+    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Nạp từ 200.000đ được tặng 10% giá trị nạp</p>
+    <a href="/customer/wallet" class="btn-ev btn-ev-primary btn-ev-sm">
+      <i class="fas fa-wallet"></i> Nạp ngay
+    </a>
+  </div>
+</div>
