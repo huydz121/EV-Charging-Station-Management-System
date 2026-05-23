@@ -1,0 +1,682 @@
+===================================================================
+  CÁC SƠ ĐỒ UML — ĐÚNG CHUẨN THEO SLIDE CÔ NGUYỄN THỊ TUYẾT
+  Hướng dẫn: Vào https://www.plantuml.com/plantuml/uml
+  Paste từng đoạn code (@startuml → @enduml) → Bấm Submit → Tải PNG
+===================================================================
+
+
+============================
+1. BIỂU ĐỒ USE CASE (Bài 3)
+   Theo Chương 3 slide 57-101
+   - Tác nhân = hình người
+   - UC = hình elip
+   - Quan hệ: include, extend
+   - Biên hệ thống = hình chữ nhật
+============================
+
+@startuml UseCase_Diagram
+left to right direction
+skinparam backgroundColor white
+skinparam usecase {
+  BackgroundColor #FAFAFA
+  BorderColor #333333
+}
+skinparam actor {
+  BorderColor #333333
+}
+
+actor "Khách hàng" as KH
+actor "Quản trị viên" as QTV
+actor "PayOS" as PayOS
+
+rectangle "Hệ thống Quản lý Trạm Sạc Xe Điện" {
+
+  usecase "Đăng ký tài khoản" as UC01
+  usecase "Xác thực OTP" as UC01_1
+  usecase "Đăng nhập" as UC02
+  usecase "Quên mật khẩu" as UC03
+  usecase "Gửi OTP khôi phục" as UC03_1
+  usecase "Đặt lại mật khẩu" as UC03_2
+  usecase "Đăng xuất" as UC04
+
+  usecase "Tìm trạm sạc\ntrên bản đồ" as UC05
+  usecase "Đặt chỗ sạc" as UC06
+  usecase "Bắt đầu phiên sạc" as UC07
+  usecase "Theo dõi sạc\nthời gian thực" as UC07_1
+  usecase "Dừng sạc &\nchốt hóa đơn" as UC07_2
+  usecase "Nạp tiền ví\nđiện tử" as UC08
+  usecase "Xem lịch sử\ngiao dịch" as UC09
+  usecase "Quản lý hồ sơ\ncá nhân" as UC10
+
+  usecase "Dashboard\nthống kê" as UC11
+  usecase "Quản lý\ntrạm sạc" as UC12
+  usecase "Thêm trạm sạc" as UC12_1
+  usecase "Sửa trạm sạc" as UC12_2
+  usecase "Xóa trạm sạc" as UC12_3
+  usecase "Quản lý\nngười dùng" as UC13
+  usecase "Cấu hình\nbảng giá" as UC14
+  usecase "Báo cáo\nkế toán" as UC15
+  usecase "Quản lý\nbảo trì" as UC16
+  usecase "Xử lý\nhoàn tiền" as UC17
+}
+
+' === Quan hệ Tác nhân - UC ===
+KH -- UC01
+KH -- UC02
+KH -- UC03
+KH -- UC04
+KH -- UC05
+KH -- UC06
+KH -- UC07
+KH -- UC08
+KH -- UC09
+KH -- UC10
+
+QTV -- UC02
+QTV -- UC04
+QTV -- UC11
+QTV -- UC12
+QTV -- UC13
+QTV -- UC14
+QTV -- UC15
+QTV -- UC16
+QTV -- UC17
+
+PayOS -- UC08
+
+' === Quan hệ Include (bao hàm) ===
+UC01 ..> UC01_1 : <<include>>
+UC03 ..> UC03_1 : <<include>>
+UC03 ..> UC03_2 : <<include>>
+UC07 ..> UC07_1 : <<include>>
+UC07 ..> UC07_2 : <<include>>
+
+' === Quan hệ Extend (mở rộng) ===
+UC12_1 ..> UC12 : <<extend>>
+UC12_2 ..> UC12 : <<extend>>
+UC12_3 ..> UC12 : <<extend>>
+
+@enduml
+
+
+============================
+2. BIỂU ĐỒ LỚP PHÂN TÍCH (Bài 4)
+   Theo Chương 4 slide 110-114
+   Theo Chương 2 slide 52-55
+   - Lớp = HCN 3 ngăn (tên, thuộc tính, phương thức)
+   - Phạm vi: + public, - private, # protected
+   - Quan hệ: Association, Aggregation, Composition, Inheritance
+   - Bội số: 1, *, 0..1, 1..*
+============================
+
+@startuml Class_Diagram
+skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+  ArrowColor #333333
+}
+
+class User {
+  - _id : ObjectId
+  - fullName : String
+  - email : String
+  - phone : String
+  - password : String
+  - role : String
+  - avatar : String
+  - balance : Number
+  - isActive : Boolean
+  - otp : String
+  - otpExpires : Date
+  - lastLogin : Date
+  --
+  + comparePassword(password : String) : Boolean
+  + pre_save() : void
+}
+
+class Station {
+  - _id : ObjectId
+  - name : String
+  - address : String
+  - location : GeoJSON
+  - status : String
+  - pricePerKwh : Number
+  - rating : Number
+  - totalSessions : Number
+  - totalRevenue : Number
+  - description : String
+  --
+  + findNearby(lng, lat, radius) : Station[]
+}
+
+class Connector {
+  - type : String
+  - power : Number
+  - status : String
+}
+
+class Vehicle {
+  - _id : ObjectId
+  - name : String
+  - manufacturer : String
+  - licensePlate : String
+  - batteryCapacity : Number
+  - connectorType : String
+  - isDefault : Boolean
+}
+
+class ChargingSession {
+  - _id : ObjectId
+  - connectorIndex : Number
+  - status : String
+  - startTime : Date
+  - endTime : Date
+  - energyDelivered : Number
+  - targetEnergy : Number
+  - currentPower : Number
+  - batteryStart : Number
+  - batteryEnd : Number
+  - pricePerKwh : Number
+  - totalCost : Number
+  - paymentStatus : String
+  --
+  + startCharging() : void
+  + getChargingStatus() : JSON
+  + stopCharging() : void
+}
+
+class Payment {
+  - _id : ObjectId
+  - type : String
+  - amount : Number
+  - method : String
+  - status : String
+  - payosOrderCode : Number
+  - description : String
+  - transactionDate : Date
+  --
+  + createTopup() : PaymentLink
+  + checkTopupStatus() : String
+  + verifyWebhook() : Boolean
+}
+
+class Reservation {
+  - _id : ObjectId
+  - connectorIndex : Number
+  - scheduledTime : Date
+  - duration : Number
+  - status : String
+  - notes : String
+}
+
+class PriceRate {
+  - _id : ObjectId
+  - name : String
+  - type : String
+  - pricePerKwh : Number
+  - startHour : Number
+  - endHour : Number
+  - isActive : Boolean
+}
+
+class Maintenance {
+  - _id : ObjectId
+  - connectorIndex : Number
+  - type : String
+  - description : String
+  - status : String
+  - assignedTo : String
+  - cost : Number
+}
+
+' === Quan hệ Hợp thành (Composition) - hình thoi đặc ===
+Station "1" *-- "1..*" Connector : chứa >
+
+' === Quan hệ Liên kết (Association) ===
+User "1" -- "0..*" Vehicle : sở hữu >
+User "1" -- "0..*" ChargingSession : thực hiện >
+User "1" -- "0..*" Payment : tạo >
+User "1" -- "0..*" Reservation : đặt chỗ >
+Station "1" -- "0..*" ChargingSession : cung cấp >
+Station "1" -- "0..*" Reservation : nhận >
+Station "1" -- "0..*" Maintenance : bảo trì >
+
+@enduml
+
+
+============================
+3. BIỂU ĐỒ TRẠNG THÁI (Bài 4)
+   Theo Chương 2 slide 61-62
+   - Trạng thái = HCN tròn góc
+   - Trạng thái khởi đầu = hình tròn đặc
+   - Trạng thái kết thúc = 2 hình tròn lồng nhau
+   - Chuyển tiếp = mũi tên liền nét
+============================
+
+@startuml Statechart_ChargingSession
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+[*] --> Pending : Khách bấm\n"Bắt đầu sạc"
+
+state Pending : entry / Tạo ChargingSession
+state Pending : do / Kiểm tra balance >= 200.000đ
+
+state Charging : entry / connector.status = in_use
+state Charging : do / Polling mỗi 2s cập nhật kWh, kW, %
+state Charging : exit / Chốt hóa đơn
+
+state Completed : entry / paymentStatus = paid
+state Completed : do / Trừ balance, giải phóng connector
+
+state Cancelled : entry / Không phát sinh chi phí
+
+state Error : entry / Ghi log lỗi
+state Error : do / Thông báo Admin xử lý
+
+Pending --> Charging : [balance >= 200.000đ\n& connector = available]
+Pending --> Cancelled : Khách hủy
+Charging --> Completed : Đạt targetEnergy\nhoặc bấm "Dừng sạc"
+Charging --> Error : Mất kết nối /\nQuá tải điện
+Completed --> [*]
+Cancelled --> [*]
+Error --> [*] : Admin xử lý xong
+
+@enduml
+
+
+============================
+4. BIỂU ĐỒ TUẦN TỰ — SẠC XE (Bài 4)
+   Theo Chương 2 slide 63-64
+   - Đối tượng = HCN trên đường vòng đời
+   - Thông điệp: call (mũi tên liền), return (mũi tên đứt)
+   - Đường vòng đời = đường dọc nét đứt
+============================
+
+@startuml Sequence_Charging
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Khách hàng" as KH
+participant ":GiaoDienWeb" as UI
+participant ":ChargingController" as CC
+participant ":User" as U
+participant ":Station" as ST
+participant ":ChargingSession" as CS
+
+KH -> UI : 1: chonTramVaSungSac()
+UI -> CC : 2: startCharging(stationId, connectorIndex)
+CC -> U : 3: findById(userId)
+U --> CC : 4: user
+CC -> CC : 5: kiemTraBalance(balance >= 200000)
+CC -> ST : 6: findById(stationId)
+ST --> CC : 7: station
+CC -> CC : 8: kiemTraConnector(status == available)
+CC -> CS : 9: create(user, station, pricePerKwh)
+CS --> CC : 10: session (status = charging)
+CC -> ST : 11: connectors[i].status = in_use
+CC -> ST : 12: save()
+CC --> UI : 13: {success: true, sessionId}
+UI --> KH : 14: hienThiManHinhTheoDoiSac()
+
+loop Polling moi 2 giay
+  UI -> CC : 15: getChargingStatus(sessionId)
+  CC -> CS : 16: findById(sessionId)
+  CC -> CC : 17: tinhToan(energyDelivered, currentPower, batteryEnd)
+  CC -> CS : 18: save()
+  CC --> UI : 19: {kWh, kW, %, cost}
+  UI --> KH : 20: capNhatProgressBar()
+end
+
+KH -> UI : 21: bamDungSac()
+UI -> CC : 22: stopCharging(sessionId)
+CC -> CS : 23: status = completed, endTime = now
+CC -> CS : 24: totalCost = energyDelivered * pricePerKwh
+CC -> U : 25: balance -= totalCost
+CC -> U : 26: save()
+CC -> ST : 27: connectors[i].status = available
+CC -> ST : 28: totalRevenue += totalCost
+CC -> ST : 29: save()
+CC --> UI : 30: {success: true, hoaDon}
+UI --> KH : 31: hienThiHoaDonHoanTat()
+
+@enduml
+
+
+============================
+5. BIỂU ĐỒ TUẦN TỰ — NẠP TIỀN (Bài 4)
+============================
+
+@startuml Sequence_Payment
+skinparam backgroundColor white
+
+actor "Khách hàng" as KH
+participant ":GiaoDienVi" as UI
+participant ":PaymentController" as PC
+participant ":Payment" as PM
+participant ":PayOS" as POS
+participant ":User" as U
+
+KH -> UI : 1: nhapSoTienNap(100000)
+UI -> PC : 2: createTopup(amount)
+PC -> PM : 3: create(type=topup, status=pending,\norderCode=Date.now())
+PM --> PC : 4: payment
+PC -> POS : 5: createPaymentLink(orderCode,\namount, returnUrl, cancelUrl)
+POS --> PC : 6: {checkoutUrl, qrCode}
+PC --> UI : 7: {qrCode, orderCode}
+UI --> KH : 8: hienThiMaQR_VietQR()
+
+KH -> KH : 9: moAppNganHang_QuetQR_ChuyenKhoan()
+
+POS -> PC : 10: POST /webhook/payos\n{orderCode, status=PAID, checksum}
+PC -> PC : 11: verifyWebhook()\nXác minh HMAC checksum
+PC -> PM : 12: status = completed
+PC -> U : 13: balance += amount
+PC -> U : 14: save()
+PC --> POS : 15: {success: true}
+
+loop Polling moi 3 giay
+  UI -> PC : 16: checkTopupStatus(orderCode)
+  PC -> PM : 17: findOne({payosOrderCode})
+  PC --> UI : 18: {status: completed}
+end
+
+UI --> KH : 19: thongBaoNapTienThanhCong()\ncapNhatSoDuVi()
+
+@enduml
+
+
+============================
+6. BIỂU ĐỒ CỘNG TÁC — ĐĂNG NHẬP (Bài 4)
+   Theo Chương 2 slide 65
+   Theo Chương 4 slide 115-116
+   - Đối tượng = HCN
+   - Thông điệp = số thứ tự + tên
+   - Mũi tên = hướng gửi thông điệp
+============================
+
+@startuml Collaboration_Login
+skinparam backgroundColor white
+
+actor ":KhachHang" as KH
+
+object ":GiaoDienDangNhap" as UI
+object ":AuthController" as AC
+object ":User" as U
+
+KH --> UI : 1: nhapEmail_MatKhau()
+UI --> AC : 2: login(email, password)
+AC --> U : 3: findOne({email})
+U --> AC : 4: user
+AC --> AC : 5: comparePassword(password)
+AC --> AC : 6: [isActive == false] guiLaiOTP()
+AC --> UI : 7: taoSession_ChuyenHuong(role)
+UI --> KH : 8: hienThiTrangChu()
+
+@enduml
+
+
+============================
+7. BIỂU ĐỒ ERD / DATABASE DIAGRAM (Bài 5)
+   Theo Chương 6 slide 133-140
+   - Thực thể = entity (HCN có khóa)
+   - Quan hệ: 1-1, 1-N, N-N
+   - Khóa chính (PK), Khóa ngoại (FK)
+============================
+
+@startuml ERD_Diagram
+skinparam backgroundColor white
+skinparam linetype ortho
+
+entity "USERS" as users {
+  * _id : ObjectId <<PK>>
+  --
+  fullName : String
+  email : String <<Unique>>
+  phone : String
+  password : String
+  role : String {customer, admin}
+  balance : Number
+  isActive : Boolean
+  otp : String
+  otpExpires : Date
+  lastLogin : Date
+  createdAt : Date
+}
+
+entity "STATIONS" as stations {
+  * _id : ObjectId <<PK>>
+  --
+  name : String
+  address : String
+  location : GeoJSON
+  connectors[] : Embedded
+  status : String
+  pricePerKwh : Number
+  rating : Number
+  totalSessions : Number
+  totalRevenue : Number
+}
+
+entity "VEHICLES" as vehicles {
+  * _id : ObjectId <<PK>>
+  --
+  * user_id : ObjectId <<FK>>
+  name : String
+  manufacturer : String
+  licensePlate : String
+  batteryCapacity : Number
+  connectorType : String
+}
+
+entity "CHARGING_SESSIONS" as sessions {
+  * _id : ObjectId <<PK>>
+  --
+  * user_id : ObjectId <<FK>>
+  * station_id : ObjectId <<FK>>
+  connectorIndex : Number
+  status : String
+  startTime : Date
+  endTime : Date
+  energyDelivered : Number
+  pricePerKwh : Number
+  totalCost : Number
+  paymentStatus : String
+}
+
+entity "PAYMENTS" as payments {
+  * _id : ObjectId <<PK>>
+  --
+  * user_id : ObjectId <<FK>>
+  session_id : ObjectId <<FK>>
+  type : String
+  amount : Number
+  method : String
+  status : String
+  payosOrderCode : Number
+  transactionDate : Date
+}
+
+entity "RESERVATIONS" as reservations {
+  * _id : ObjectId <<PK>>
+  --
+  * user_id : ObjectId <<FK>>
+  * station_id : ObjectId <<FK>>
+  connectorIndex : Number
+  scheduledTime : Date
+  duration : Number
+  status : String
+}
+
+entity "PRICERATES" as pricerates {
+  * _id : ObjectId <<PK>>
+  --
+  name : String
+  type : String
+  pricePerKwh : Number
+  startHour : Number
+  endHour : Number
+  isActive : Boolean
+}
+
+entity "MAINTENANCES" as maintenances {
+  * _id : ObjectId <<PK>>
+  --
+  * station_id : ObjectId <<FK>>
+  connectorIndex : Number
+  type : String
+  description : String
+  status : String
+  cost : Number
+}
+
+' === Quan hệ 1-N ===
+users ||--o{ vehicles : "1-N\nSỞ HỮU"
+users ||--o{ sessions : "1-N\nTHỰC HIỆN"
+users ||--o{ payments : "1-N\nTẠO"
+users ||--o{ reservations : "1-N\nĐẶT CHỖ"
+stations ||--o{ sessions : "1-N\nCUNG CẤP"
+stations ||--o{ reservations : "1-N\nNHẬN"
+stations ||--o{ maintenances : "1-N\nBẢO TRÌ"
+
+@enduml
+
+
+============================
+8. BIỂU ĐỒ THÀNH PHẦN (Bài 6)
+   Theo Chương 2 slide 66-68
+   - Thành phần = HCN có icon component
+   - Giao diện = hình tròn nhỏ
+   - Phụ thuộc = mũi tên nét đứt
+============================
+
+@startuml Component_Diagram
+skinparam backgroundColor white
+skinparam component {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+package "Tầng Giao Diện\n(View Layer)" #E8F5E9 {
+  [Client Browser] as Browser
+  [EJS Template Engine] as EJS
+  [Leaflet.js Map] as Leaflet
+  [Chart.js Analytics] as Chart
+  [Static Assets\n(CSS, JS, Images)] as Assets
+}
+
+package "Tầng Xử Lý\n(Controller Layer)" #E3F2FD {
+  [Express.js Router] as Router
+  [Auth Controller] as AuthCtrl
+  [Station Controller] as StationCtrl
+  [Charging Controller] as ChargeCtrl
+  [Payment Controller] as PayCtrl
+  [Dashboard Controller] as DashCtrl
+  [Auth Middleware\n(isAuthenticated)] as AuthMW
+  [Role Middleware\n(isAdmin)] as RoleMW
+}
+
+package "Tầng Dữ Liệu\n(Model Layer)" #FFF3E0 {
+  [User Model] as UserM
+  [Station Model] as StationM
+  [ChargingSession Model] as SessionM
+  [Payment Model] as PaymentM
+  [Nodemailer Service] as Mailer
+  [PayOS SDK Service] as PayOS
+}
+
+database "MongoDB Atlas" as DB
+
+' === Luồng phụ thuộc ===
+Browser ..> Router
+Router ..> AuthMW
+AuthMW ..> RoleMW
+Router ..> AuthCtrl
+Router ..> StationCtrl
+Router ..> ChargeCtrl
+Router ..> PayCtrl
+Router ..> DashCtrl
+AuthCtrl ..> UserM
+AuthCtrl ..> Mailer
+StationCtrl ..> StationM
+ChargeCtrl ..> SessionM
+ChargeCtrl ..> UserM
+ChargeCtrl ..> StationM
+PayCtrl ..> PaymentM
+PayCtrl ..> PayOS
+DashCtrl ..> SessionM
+UserM ..> DB
+StationM ..> DB
+SessionM ..> DB
+PaymentM ..> DB
+
+@enduml
+
+
+============================
+9. BIỂU ĐỒ TRIỂN KHAI (Bài 6)
+   Theo Chương 2 slide 69
+   Theo Chương 5 slide 122-123
+   - Nút = hình hộp 3D
+   - Liên kết = đường nối có giao thức
+   - Thành phần = artifact bên trong nút
+============================
+
+@startuml Deployment_Diagram
+skinparam backgroundColor white
+skinparam node {
+  BackgroundColor #FEFEFE
+  BorderColor #333333
+}
+
+node "Thiết bị Khách hàng" as client {
+  artifact "Chrome / Safari\nBrowser" as browser
+  artifact "GPS Module" as gps
+}
+
+node "Cloudflare CDN" as cdn {
+  artifact "WAF Firewall" as waf
+  artifact "SSL/TLS\nCertificate" as ssl
+}
+
+node "Cloud VPS\n(Ubuntu Linux)" as server {
+  artifact "Node.js v22+" as nodejs
+  artifact "PM2 Process\nManager" as pm2
+  artifact "Express.js App" as app {
+  }
+}
+
+node "MongoDB Atlas\n(Replica Set)" as atlas {
+  node "Primary\n(Singapore)" as primary {
+    database "MongoDB" as db1
+  }
+  node "Secondary\n(Hong Kong)" as secondary {
+    database "MongoDB" as db2
+  }
+}
+
+node "PayOS Gateway" as payos {
+  artifact "VietQR API" as qr
+  artifact "Webhook Service" as wh
+}
+
+node "Google SMTP" as smtp {
+  artifact "Gmail Server\n(Port 465 SSL)" as gmail
+}
+
+' === Liên kết truyền thông ===
+client -- cdn : <<HTTPS\nport 443>>
+cdn -- server : <<Proxy\nport 3000>>
+server -- atlas : <<TCP\nport 27017>>
+server -- payos : <<HTTPS\nRESTful API>>
+server -- smtp : <<SMTP\nport 465>>
+payos -- server : <<Webhook\nHTTP POST>>
+primary -- secondary : <<Replication>>
+
+@enduml

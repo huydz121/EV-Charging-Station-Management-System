@@ -1,0 +1,113 @@
+
+<div class="station-detail-header">
+  <a href="/customer/map" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+    <i class="fas fa-arrow-left"></i> Quay lại
+  </a>
+  <h2 class="station-detail-name"><%= station.name %></h2>
+  <div class="station-detail-address">
+    <i class="fas fa-map-marker-alt" style="color: var(--accent);"></i>
+    <%= station.address %>
+  </div>
+  <div class="station-detail-rating">
+    <% for (var i = 1; i <= 5; i++) { %>
+      <% if (i <= Math.round(station.rating)) { %>
+        <i class="fas fa-star" style="color: var(--warning);"></i>
+      <% } else { %>
+        <i class="fas fa-star" style="color: var(--bg-tertiary);"></i>
+      <% } %>
+    <% } %>
+    <span><%= station.rating ? station.rating.toFixed(1) : '0.0' %></span>
+    <span style="color: var(--text-muted); font-size: 12px; margin-left: 4px;">(<%= station.totalRatings || 0 %> đánh giá)</span>
+  </div>
+</div>
+
+<!-- Station Info -->
+<div style="padding: 20px;">
+  <div class="ev-card" style="margin-bottom: 16px;">
+    <div class="d-flex justify-content-between mb-3">
+      <div>
+        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Giá điện</div>
+        <div style="font-size: 24px; font-weight: 700; color: var(--accent);"><%= station.pricePerKwh ? station.pricePerKwh.toLocaleString('vi-VN') : '0' %>đ<span style="font-size: 14px; color: var(--text-muted);">/kWh</span></div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Trạng thái</div>
+        <span class="ev-badge ev-badge-<%= station.status === 'active' ? 'success' : station.status === 'maintenance' ? 'warning' : 'danger' %>">
+          <%= station.status === 'active' ? 'Hoạt động' : station.status === 'maintenance' ? 'Bảo trì' : 'Ngừng hoạt động' %>
+        </span>
+      </div>
+    </div>
+    <div style="font-size: 12px; color: var(--text-muted);">
+      <i class="fas fa-clock" style="color: var(--accent); margin-right: 4px;"></i>
+      Giờ hoạt động: <%= station.operatingHours ? station.operatingHours.open : '00:00' %> - <%= station.operatingHours ? station.operatingHours.close : '23:59' %>
+    </div>
+  </div>
+
+  <!-- Connectors -->
+  <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">
+    <i class="fas fa-plug" style="color: var(--accent);"></i> Trụ sạc (<%= station.connectors ? station.connectors.length : 0 %>)
+  </h4>
+
+  <% if (station.connectors && station.connectors.length > 0) { %>
+    <% station.connectors.forEach(function(connector, idx) { %>
+      <div class="connector-card">
+        <div class="connector-info">
+          <div class="connector-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div>
+            <div style="font-size: 14px; font-weight: 600;">Trụ #<%= idx + 1 %> - <%= connector.type %></div>
+            <div style="font-size: 12px; color: var(--text-muted);"><%= connector.power %>kW</div>
+          </div>
+        </div>
+        <div style="text-align: right;">
+          <span class="ev-badge ev-badge-<%= connector.status === 'available' ? 'success' : connector.status === 'in_use' ? 'warning' : 'danger' %>">
+            <%= connector.status === 'available' ? 'Còn trống' : connector.status === 'in_use' ? 'Đang sạc' : 'Bảo trì' %>
+          </span>
+          <% if (connector.status === 'available') { %>
+            <form action="/customer/charging/start" method="POST" style="margin-top: 8px;" data-station="<%= station._id %>" data-idx="<%= idx %>" onsubmit="return startChargingFromDetail(event, this)">
+              <button type="submit" class="btn-ev btn-ev-primary btn-ev-sm">
+                <i class="fas fa-bolt"></i> Sạc
+              </button>
+            </form>
+          <% } else if (connector.status === 'in_use' && typeof sessionMap !== 'undefined' && sessionMap[idx]) { %>
+            <div style="margin-top: 8px;">
+              <a href="/customer/charging/<%= sessionMap[idx] %>" class="btn-ev btn-ev-outline btn-ev-sm" style="border-color: var(--warning); color: var(--warning);">
+                <i class="fas fa-eye"></i> Xem sạc
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  <% } %>
+
+  <% if (station.description) { %>
+    <div class="ev-card" style="margin-top: 16px;">
+      <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">Mô tả</h4>
+      <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;"><%= station.description %></p>
+    </div>
+  <% } %>
+</div>
+
+<script>
+function startChargingFromDetail(event, form) {
+  event.preventDefault();
+  const stationId = form.getAttribute('data-station');
+  const connectorIndex = parseInt(form.getAttribute('data-idx'));
+  fetch('/customer/charging/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ stationId, connectorIndex, targetEnergy: 50 })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = '/customer/charging/' + data.sessionId;
+    } else {
+      alert(data.message || 'Lỗi khi bắt đầu sạc');
+    }
+  })
+  .catch(err => alert('Lỗi kết nối'));
+  return false;
+}
+</script>

@@ -1,0 +1,33 @@
+﻿
+<div style="padding: 20px;">
+  <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">
+    <i class="fas fa-star" style="color: var(--warning);"></i> Đánh giá phiên sạc
+  </h3>
+
+  <div class="ev-card" style="text-align: center;">
+    <p style="color: var(--text-muted); margin-bottom: 16px;">Bạn hài lòng với trải nghiệm sạc?</p>
+    <div class="d-flex justify-content-center gap-2 mb-3" id="ratingStars">
+      <% for (var i = 1; i <= 5; i++) { %>
+        <i class="fas fa-star" style="font-size: 32px; cursor: pointer; color: var(--bg-tertiary);" onclick="setRating(<%= i %>)" id="star-<%= i %>"></i>
+      <% } %>
+    </div>
+    <textarea class="ev-input" rows="3" placeholder="Nhận xét của bạn..." id="reviewText" style="margin-bottom: 16px;"></textarea>
+    <button class="btn-ev btn-ev-primary" style="width: 100%;" onclick="submitReview()">
+      <i class="fas fa-paper-plane"></i> Gửi đánh giá
+    </button>
+  </div>
+</div>
+
+<script>
+let selectedRating = 0;
+function setRating(r) {
+  selectedRating = r;
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('star-' + i).style.color = i <= r ? 'var(--warning)' : 'var(--bg-tertiary)';
+  }
+}
+function submitReview() {
+  alert('Cảm ơn đánh giá của bạn!');
+  window.location.href = '/customer';
+}
+</script>

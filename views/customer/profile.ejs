@@ -1,0 +1,362 @@
+<% activePage = (typeof activeTab !== 'undefined' && activeTab === 'wallet') ? 'wallet' : 'profile' %>
+
+<% if (activePage === 'profile') { %>
+<div class="profile-header">
+  <div class="profile-avatar">
+    <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+  </div>
+  <div class="profile-name"><%= user.fullName %></div>
+  <div class="profile-email"><%= user.email %></div>
+</div>
+
+<!-- Profile Menu -->
+<div class="profile-menu">
+  <a href="#" class="profile-menu-item" onclick="showEditProfile()">
+    <i class="fas fa-user-edit"></i>
+    <span>Chỉnh sửa hồ sơ</span>
+    <i class="fas fa-chevron-right chevron"></i>
+  </a>
+  <a href="#" class="profile-menu-item" onclick="showChangePassword()">
+    <i class="fas fa-lock"></i>
+    <span>Đổi mật khẩu</span>
+    <i class="fas fa-chevron-right chevron"></i>
+  </a>
+  <a href="/customer/history" class="profile-menu-item">
+    <i class="fas fa-history"></i>
+    <span>Lịch sử sạc</span>
+    <i class="fas fa-chevron-right chevron"></i>
+  </a>
+  <a href="#" class="profile-menu-item" onclick="showSupport()">
+    <i class="fas fa-headset"></i>
+    <span>Hỗ trợ</span>
+    <i class="fas fa-chevron-right chevron"></i>
+  </a>
+  <a href="/auth/logout" class="profile-menu-item" style="border-color: rgba(255,82,82,0.2);">
+    <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
+    <span style="color: var(--danger);">Đăng xuất</span>
+    <i class="fas fa-chevron-right chevron"></i>
+  </a>
+</div>
+<% } %>
+
+<% if (activePage === 'wallet') { %>
+<!-- Balance -->
+<div class="balance-card" style="margin: 20px;">
+  <div class="balance-card-label">Số dư ví</div>
+  <div class="balance-card-value"><%= user.balance ? user.balance.toLocaleString('vi-VN') : '0' %>đ</div>
+</div>
+
+<!-- Wallet Actions -->
+<div class="wallet-actions">
+  <button class="wallet-action-btn" onclick="showTopup()">
+    <i class="fas fa-plus-circle"></i>
+    <span>Nạp tiền</span>
+  </button>
+  <button class="wallet-action-btn" onclick="location.href='/customer/history'">
+    <i class="fas fa-exchange-alt"></i>
+    <span>Lịch sử GD</span>
+  </button>
+</div>
+
+<!-- Transaction History -->
+<% if (typeof payments !== 'undefined' && payments && payments.length > 0) { %>
+<div style="padding: 20px;">
+  <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">Giao dịch gần đây</h4>
+  <% payments.forEach(function(p) { %>
+    <div class="history-item">
+      <div class="history-icon <%= p.status === 'completed' ? 'completed' : 'cancelled' %>">
+        <i class="fas fa-<%= p.type === 'topup' ? 'plus' : p.type === 'refund' ? 'undo' : 'bolt' %>"></i>
+      </div>
+      <div class="history-info">
+        <div class="history-station"><%= p.description || (p.type === 'topup' ? 'Nạp tiền' : p.type === 'refund' ? 'Hoàn tiền' : 'Thanh toán sạc') %></div>
+        <div class="history-date"><%= p.createdAt ? new Date(p.createdAt).toLocaleDateString('vi-VN') : '' %></div>
+      </div>
+      <div class="history-amount">
+        <div class="history-cost" <%- (p.type === 'topup' || p.type === 'refund') ? 'style="color: var(--accent);"' : 'style="color: var(--danger);"' %>>
+          <%= p.type === 'topup' || p.type === 'refund' ? '+' : '-' %><%= p.amount ? p.amount.toLocaleString('vi-VN') : '0' %>đ
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+<% } %>
+<% } %>
+
+<!-- Topup Modal - Nhập số tiền -->
+<div class="modal fade" id="topupModal" tabindex="-1" style="--bs-modal-bg: var(--bg-card); --bs-modal-color: var(--text-primary); --bs-modal-border-color: var(--border);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);">
+      <div class="modal-header" style="border-color: var(--border);">
+        <h5 class="modal-title" style="font-weight: 700;">Nạp tiền vào ví</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding: 24px;">
+        <div class="mb-3">
+          <label class="ev-label">Số tiền nạp</label>
+          <input type="number" class="ev-input" id="topupAmount" placeholder="Nhập số tiền..." min="10000" step="10000">
+        </div>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="document.getElementById('topupAmount').value=50000">50.000đ</button>
+          <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="document.getElementById('topupAmount').value=100000">100.000đ</button>
+          <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="document.getElementById('topupAmount').value=200000">200.000đ</button>
+          <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="document.getElementById('topupAmount').value=500000">500.000đ</button>
+        </div>
+        <button class="btn-ev btn-ev-primary" style="width: 100%;" id="topupBtn" onclick="processTopup()">
+          <i class="fas fa-wallet"></i> Nạp tiền
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QR Code Modal - Hiển thị mã QR thanh toán -->
+<div class="modal fade" id="qrModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" style="--bs-modal-bg: var(--bg-card); --bs-modal-color: var(--text-primary); --bs-modal-border-color: var(--border);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);">
+      <div class="modal-header" style="border-color: var(--border);">
+        <h5 class="modal-title" style="font-weight: 700;"><i class="fas fa-qrcode" style="color: var(--accent);"></i> Quét mã để thanh toán</h5>
+        <button type="button" class="btn-close btn-close-white" onclick="cancelQrPayment()"></button>
+      </div>
+      <div class="modal-body" style="padding: 24px; text-align: center;">
+        <!-- Số tiền -->
+        <div style="background: linear-gradient(135deg, var(--accent), #00b894); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+          <div style="font-size: 13px; opacity: 0.8; color: #fff;">Số tiền nạp</div>
+          <div id="qrAmount" style="font-size: 28px; font-weight: 800; color: #fff;">0đ</div>
+        </div>
+
+        <!-- QR Code -->
+        <div id="qrCodeContainer" style="background: #fff; border-radius: 16px; padding: 20px; display: inline-block; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <img id="qrCodeImage" src="" alt="QR Code" style="width: 220px; height: 220px; display: block;">
+        </div>
+
+        <!-- Hướng dẫn -->
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+            <i class="fas fa-mobile-alt" style="color: var(--accent);"></i> 
+            Mở app <b>Ngân hàng</b> trên điện thoại → Quét mã QR
+          </div>
+          <div id="qrCountdown" style="font-size: 14px; font-weight: bold; color: var(--danger);"></div>
+        </div>
+
+        <!-- Trạng thái chờ -->
+        <div id="qrWaiting" style="display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: rgba(0,230,118,0.08); border-radius: 10px; border: 1px solid rgba(0,230,118,0.2);">
+          <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+          <span style="font-size: 14px; color: var(--accent);">Đang chờ thanh toán...</span>
+        </div>
+
+        <!-- Thành công -->
+        <div id="qrSuccess" style="display: none; padding: 16px; background: rgba(0,230,118,0.1); border-radius: 12px; border: 1px solid rgba(0,230,118,0.3);">
+          <div style="font-size: 48px; margin-bottom: 8px;">✅</div>
+          <div style="font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 4px;">Nạp tiền thành công!</div>
+          <div id="qrNewBalance" style="font-size: 14px; color: var(--text-secondary);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Support Modal -->
+<div class="modal fade" id="supportModal" tabindex="-1" style="--bs-modal-bg: var(--bg-card); --bs-modal-color: var(--text-primary); --bs-modal-border-color: var(--border);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);">
+      <div class="modal-header" style="border-color: var(--border);">
+        <h5 class="modal-title" style="font-weight: 700;"><i class="fas fa-headset" style="color: var(--info);"></i> Trung tâm Hỗ trợ</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding: 24px; text-align: center;">
+        <div style="width: 60px; height: 60px; background: rgba(68,138,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+          <i class="fas fa-headset" style="font-size: 28px; color: var(--info);"></i>
+        </div>
+        <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">Vui lòng liên hệ với chúng tôi qua các kênh sau để được hỗ trợ nhanh nhất.</p>
+        
+        <a href="tel:0969854725" style="display: flex; align-items: center; justify-content: center; gap: 12px; background: rgba(0, 230, 118, 0.1); border: 1px solid rgba(0,230,118,0.3); border-radius: 12px; padding: 16px; text-decoration: none; color: var(--accent); margin-bottom: 12px; transition: all 0.2s;">
+          <i class="fas fa-phone-alt" style="font-size: 20px;"></i>
+          <span style="font-size: 16px; font-weight: 700;">0969.854.725</span>
+        </a>
+
+        <a href="mailto:nkh159205@gmail.com" style="display: flex; align-items: center; justify-content: center; gap: 12px; background: rgba(68, 138, 255, 0.1); border: 1px solid rgba(68, 138, 255, 0.3); border-radius: 12px; padding: 16px; text-decoration: none; color: var(--info); transition: all 0.2s;">
+          <i class="fas fa-envelope" style="font-size: 20px;"></i>
+          <span style="font-size: 16px; font-weight: 700;">nkh159205@gmail.com</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let pollingTimer = null;
+let countdownTimer = null;
+let currentOrderCode = null;
+
+function showSupport() {
+  new bootstrap.Modal(document.getElementById('supportModal')).show();
+}
+
+function showTopup() {
+  new bootstrap.Modal(document.getElementById('topupModal')).show();
+}
+
+function processTopup() {
+  const amount = document.getElementById('topupAmount').value;
+  if (!amount || parseInt(amount) < 10000) {
+    alert('Vui lòng nhập số tiền tối thiểu 10.000đ');
+    return;
+  }
+
+  // Disable button 
+  const btn = document.getElementById('topupBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang tạo mã QR...';
+
+  fetch('/customer/payment/topup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ amount: parseInt(amount) })
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-wallet"></i> Nạp tiền';
+
+    if (data.success) {
+      if (data.demo) {
+        // Demo mode - no PayOS
+        alert(data.message || 'Nạp tiền thành công!');
+        location.reload();
+        return;
+      }
+
+      // Close topup modal
+      bootstrap.Modal.getInstance(document.getElementById('topupModal'))?.hide();
+
+      // Show QR modal
+      currentOrderCode = data.orderCode;
+      document.getElementById('qrAmount').textContent = parseInt(amount).toLocaleString('vi-VN') + 'đ';
+      
+      // Set QR image - PayOS returns qrCode as VietQR string, not image URL
+      const qrImg = document.getElementById('qrCodeImage');
+      if (data.qrCode) {
+        // Generate QR from VietQR string
+        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(data.qrCode);
+      } else if (data.checkoutUrl) {
+        // Fallback to checkout URL
+        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' + encodeURIComponent(data.checkoutUrl);
+      }
+
+      // Reset states
+      document.getElementById('qrWaiting').style.display = 'flex';
+      document.getElementById('qrSuccess').style.display = 'none';
+      document.getElementById('qrCodeImage').style.opacity = '1';
+
+      new bootstrap.Modal(document.getElementById('qrModal')).show();
+
+      // Start polling for payment status
+      startPolling(data.orderCode, data.expiredAt);
+    } else {
+      alert(data.message || 'Lỗi nạp tiền');
+    }
+  })
+  .catch(err => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-wallet"></i> Nạp tiền';
+    alert('Lỗi kết nối: ' + err.message);
+  });
+}
+
+function startPolling(orderCode, expiredAt) {
+  // Clear old timer
+  if (pollingTimer) clearInterval(pollingTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
+
+  // Setup countdown
+  if (expiredAt) {
+    const updateCountdown = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const remaining = expiredAt - now;
+      if (remaining <= 0) {
+        clearInterval(countdownTimer);
+        if (pollingTimer) clearInterval(pollingTimer);
+        document.getElementById('qrCountdown').textContent = 'Mã QR đã hết hạn';
+        document.getElementById('qrWaiting').style.display = 'none';
+        document.getElementById('qrCodeImage').style.opacity = '0.2';
+      } else {
+        document.getElementById('qrCountdown').textContent = `Mã sẽ hết hạn sau: ${remaining}s`;
+      }
+    };
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+  } else {
+    document.getElementById('qrCountdown').textContent = '';
+  }
+
+  // Poll every 3 seconds
+  pollingTimer = setInterval(() => {
+    fetch('/customer/payment/check/' + orderCode)
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.status === 'completed') {
+          // Payment confirmed!
+          clearInterval(pollingTimer);
+          pollingTimer = null;
+
+          // Show success
+          document.getElementById('qrWaiting').style.display = 'none';
+          document.getElementById('qrSuccess').style.display = 'block';
+          document.getElementById('qrNewBalance').textContent = 'Số dư mới: ' + (data.balance ? data.balance.toLocaleString('vi-VN') : '0') + 'đ';
+
+          // Auto reload after 2s
+          setTimeout(() => {
+            location.reload();
+          }, 2500);
+        }
+      })
+      .catch(() => {});
+  }, 3000);
+
+  // Stop polling after 10 minutes
+  setTimeout(() => {
+    if (pollingTimer) {
+      clearInterval(pollingTimer);
+      pollingTimer = null;
+    }
+  }, 600000);
+}
+
+function cancelQrPayment() {
+  if (pollingTimer) clearInterval(pollingTimer);
+  if (countdownTimer) clearInterval(countdownTimer);
+  pollingTimer = null;
+  countdownTimer = null;
+  bootstrap.Modal.getInstance(document.getElementById('qrModal'))?.hide();
+}
+
+function showEditProfile() {
+  const name = prompt('Nhập tên mới:', '<%= user.fullName %>');
+  if (name) {
+    fetch('/customer/profile', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fullName: name, phone: '<%= user.phone || "" %>' })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) location.reload();
+      else alert(data.message);
+    });
+  }
+}
+
+function showChangePassword() {
+  const current = prompt('Mật khẩu hiện tại:');
+  if (!current) return;
+  const newPw = prompt('Mật khẩu mới:');
+  if (!newPw) return;
+  fetch('/customer/profile/password', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ currentPassword: current, newPassword: newPw })
+  })
+  .then(r => r.json())
+  .then(data => alert(data.message));
+}
+</script>

@@ -1,0 +1,132 @@
+
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card" style="animation-delay: 0.1s">
+    <div class="kpi-info">
+      <h3>Tổng trạm sạc</h3>
+      <div class="kpi-value"><%= stats.totalStations || 0 %></div>
+      <div class="kpi-change up"><i class="fas fa-arrow-up"></i> <%= stats.activeStations || 0 %> hoạt động</div>
+    </div>
+    <div class="kpi-icon green"><i class="fas fa-charging-station"></i></div>
+  </div>
+
+  <div class="kpi-card" style="animation-delay: 0.2s">
+    <div class="kpi-info">
+      <h3>Phiên sạc</h3>
+      <div class="kpi-value"><%= stats.totalSessions || 0 %></div>
+      <div class="kpi-change up"><i class="fas fa-bolt"></i> <%= stats.activeSessions || 0 %> đang sạc</div>
+    </div>
+    <div class="kpi-icon blue"><i class="fas fa-bolt"></i></div>
+  </div>
+
+  <div class="kpi-card" style="animation-delay: 0.3s">
+    <div class="kpi-info">
+      <h3>Doanh thu</h3>
+      <div class="kpi-value"><%= stats.totalRevenue ? (stats.totalRevenue / 1000000).toFixed(1) : '0' %>M</div>
+      <div class="kpi-change up"><i class="fas fa-arrow-up"></i> VNĐ</div>
+    </div>
+    <div class="kpi-icon orange"><i class="fas fa-coins"></i></div>
+  </div>
+
+  <div class="kpi-card" style="animation-delay: 0.4s">
+    <div class="kpi-info">
+      <h3>Sự cố / Bảo trì</h3>
+      <div class="kpi-value"><%= stats.pendingMaintenance || 0 %></div>
+      <div class="kpi-change <%= stats.pendingMaintenance > 0 ? 'down' : 'up' %>">
+        <i class="fas fa-<%= stats.pendingMaintenance > 0 ? 'exclamation-triangle' : 'check' %>"></i>
+        <%= stats.pendingMaintenance > 0 ? 'cần xử lý' : 'Ổn định' %>
+      </div>
+    </div>
+    <div class="kpi-icon red"><i class="fas fa-tools"></i></div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="chart-grid">
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-bar" style="color: var(--accent); margin-right: 8px;"></i>Doanh thu tuần</h3>
+      <div class="revenue-filters">
+        <button class="ev-badge ev-badge-success" id="btn-tuan" onclick="updateRevenueChart('tuan')" style="border:none; cursor:pointer;" disabled>Tuần</button>
+        <button class="ev-badge ev-badge-outline" id="btn-thang" onclick="updateRevenueChart('thang')" style="border:none; cursor:pointer; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color);">Tháng</button>
+        <button class="ev-badge ev-badge-outline" id="btn-nam" onclick="updateRevenueChart('nam')" style="border:none; cursor:pointer; background: transparent; color: var(--text-muted); border: 1px solid var(--border-color);">Năm</button>
+      </div>
+    </div>
+    <div style="position: relative; height: 280px; width: 100%;">
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-card-header">
+      <h3><i class="fas fa-chart-pie" style="color: var(--accent); margin-right: 8px;"></i>Trạng thái trạm</h3>
+    </div>
+    <div style="position: relative; height: 280px; width: 100%;">
+      <canvas id="stationStatusChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Sessions -->
+<div class="table-card">
+  <div class="table-card-header">
+    <h3><i class="fas fa-history" style="color: var(--accent); margin-right: 8px;"></i>Phiên sạc gần đây</h3>
+    <a href="/admin/reports" class="btn-ev btn-ev-outline btn-ev-sm">Xem tất cả</a>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="ev-table">
+      <thead>
+        <tr>
+          <th>Khách hàng</th>
+          <th>Trạm sạc</th>
+          <th>Năng lượng</th>
+          <th>Chi phí</th>
+          <th>Trạng thái</th>
+          <th>Thời gian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (recentSessions && recentSessions.length > 0) { %>
+          <% recentSessions.forEach(function(s) { %>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; color: var(--accent); font-weight: 700; font-size: 12px;">
+                    <%= s.user ? s.user.fullName.charAt(0).toUpperCase() : '?' %>
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; color: var(--text-primary); font-size: 13px;"><%= s.user ? s.user.fullName : 'N/A' %></div>
+                    <div style="font-size: 11px; color: var(--text-muted);"><%= s.user ? s.user.email : '' %></div>
+                  </div>
+                </div>
+              </td>
+              <td style="color: var(--text-primary); font-weight: 500;"><%= s.station ? s.station.name : 'N/A' %></td>
+              <td><%= s.energyDelivered ? s.energyDelivered.toFixed(1) : '0' %> kWh</td>
+              <td style="color: var(--accent); font-weight: 600;"><%= s.totalCost ? s.totalCost.toLocaleString('vi-VN') : '0' %>đ</td>
+              <td>
+                <span class="ev-badge ev-badge-<%= s.status === 'completed' ? 'success' : s.status === 'charging' ? 'info' : 'warning' %>">
+                  <%= s.status === 'completed' ? 'Hoàn thành' : s.status === 'charging' ? 'Đang sạc' : s.status %>
+                </span>
+              </td>
+              <td style="font-size: 12px;"><%= s.createdAt ? new Date(s.createdAt).toLocaleString('vi-VN') : '' %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <i class="fas fa-inbox" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+              Chưa có phiên sạc nào
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const weeklyRevenueData = JSON.parse('<%- JSON.stringify(weeklyRevenue) %>');
+  const monthlyRevenueData = JSON.parse('<%- JSON.stringify(monthlyRevenue) %>');
+  const yearlyRevenueData = JSON.parse('<%- JSON.stringify(yearlyRevenue) %>');
+  const stationStatusData = JSON.parse('<%- JSON.stringify(stationStatus) %>');
+</script>

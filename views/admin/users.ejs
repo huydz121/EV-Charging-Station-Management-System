@@ -1,0 +1,70 @@
+﻿
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 style="font-size: 20px; font-weight: 700;">Quản lý người dùng</h2>
+    <p style="color: var(--text-muted); font-size: 13px;"><%= users.length %> người dùng</p>
+  </div>
+</div>
+
+<div class="table-card">
+  <div style="overflow-x: auto;">
+    <table class="ev-table">
+      <thead>
+        <tr>
+          <th>Người dùng</th>
+          <th>Số điện thoại</th>
+          <th>Vai trò</th>
+          <th>Số dư</th>
+          <th>Trạng thái</th>
+          <th>Ngày tạo</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(function(u) { %>
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; font-size: 14px;">
+                  <%= u.fullName.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                  <div style="font-weight: 600; color: var(--text-primary);"><%= u.fullName %></div>
+                  <div style="font-size: 11px; color: var(--text-muted);"><%= u.email %></div>
+                </div>
+              </div>
+            </td>
+            <td><%= u.phone || '-' %></td>
+            <td>
+              <span class="ev-badge ev-badge-<%= u.role === 'admin' ? 'info' : 'success' %>">
+                <%= u.role === 'admin' ? 'Admin' : 'Khách hàng' %>
+              </span>
+            </td>
+            <td style="font-weight: 600;"><%= u.balance ? u.balance.toLocaleString('vi-VN') : '0' %>đ</td>
+            <td>
+              <span class="ev-badge ev-badge-<%= u.isActive ? 'success' : 'danger' %>">
+                <%= u.isActive ? 'Hoạt động' : 'Bị khóa' %>
+              </span>
+            </td>
+            <td style="font-size: 12px;"><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString('vi-VN') : '' %></td>
+            <td>
+              <div class="d-flex gap-1">
+                <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="toggleUser('<%= u._id %>')" title="Khóa/Mở">
+                  <i class="fas fa-<%= u.isActive ? 'lock' : 'unlock' %>"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+function toggleUser(id) {
+  fetch('/admin/users/' + id + '/toggle', { method: 'PUT' })
+    .then(r => r.json())
+    .then(data => { if (data.success) location.reload(); });
+}
+</script>

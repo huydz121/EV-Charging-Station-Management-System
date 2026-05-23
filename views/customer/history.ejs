@@ -1,0 +1,48 @@
+﻿
+<div style="padding: 0 20px 16px;">
+  <h3 style="font-size: 18px; font-weight: 700;">
+    <i class="fas fa-history" style="color: var(--accent);"></i> Lịch sử sạc
+  </h3>
+</div>
+
+<div style="padding: 0 20px;">
+  <% if (sessions && sessions.length > 0) { %>
+    <% sessions.forEach(function(s) { %>
+      <div class="history-item">
+        <div class="history-icon <%= s.status === 'completed' ? 'completed' : 'cancelled' %>">
+          <i class="fas fa-<%= s.status === 'completed' ? 'check-circle' : s.status === 'charging' ? 'bolt' : 'times-circle' %>"></i>
+        </div>
+        <div class="history-info">
+          <div class="history-station"><%= s.station ? s.station.name : 'Trạm sạc' %></div>
+          <div class="history-date">
+            <%= s.createdAt ? new Date(s.createdAt).toLocaleDateString('vi-VN') : '' %> •
+            <%= s.status === 'completed' ? 'Hoàn thành' : s.status === 'charging' ? 'Đang sạc' : 'Đã hủy' %>
+          </div>
+        </div>
+        <div class="history-amount">
+          <div class="history-cost"><%= s.totalCost ? s.totalCost.toLocaleString('vi-VN') : '0' %>đ</div>
+          <div class="history-energy"><%= s.energyDelivered ? s.energyDelivered.toFixed(1) : '0' %> kWh</div>
+        </div>
+      </div>
+    <% }) %>
+
+    <!-- Pagination -->
+    <% if (totalPages > 1) { %>
+      <div class="d-flex justify-content-center gap-2" style="margin-top: 20px;">
+        <% for (var p = 1; p <= totalPages; p++) { %>
+          <a href="/customer/history?page=<%= p %>" class="btn-ev btn-ev-sm <%= p === currentPage ? 'btn-ev-primary' : 'btn-ev-outline' %>">
+            <%= p %>
+          </a>
+        <% } %>
+      </div>
+    <% } %>
+  <% } else { %>
+    <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+      <i class="fas fa-history" style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;"></i>
+      <p style="margin-bottom: 16px;">Chưa có lịch sử sạc</p>
+      <a href="/customer/map" class="btn-ev btn-ev-primary btn-ev-sm">
+        <i class="fas fa-bolt"></i> Sạc ngay
+      </a>
+    </div>
+  <% } %>
+</div>

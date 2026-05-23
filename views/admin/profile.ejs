@@ -1,0 +1,46 @@
+<div class="content-header mb-4">
+  <h2>Hồ sơ tài khoản</h2>
+</div>
+<div class="card ev-card">
+  <div class="card-body p-4">
+    <div class="row">
+      <div class="col-md-3 text-center mb-4">
+        <div class="topbar-avatar-placeholder mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem; margin-bottom: 20px;"><%= user ? user.fullName.charAt(0).toUpperCase() : 'A' %></div>
+        <h4 style="color: var(--text-light);"><%= user ? user.fullName : 'Admin EV Charge' %></h4>
+        <p style="color: var(--text-muted);"><%= user ? (user.role === 'admin' ? 'Quản trị viên' : user.role) : 'Quản trị viên' %></p>
+        <button class="btn btn-outline-success mt-2 disabled">Đang hoạt động</button>
+      </div>
+      <div class="col-md-9">
+        <h5 class="mb-4" style="color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Thông tin chi tiết</h5>
+        <form>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label text-muted">Họ và tên</label>
+              <input type="text" class="form-control ev-input" value="<%= user ? user.fullName : 'Admin EV Charge' %>" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted">Email</label>
+              <input type="email" class="form-control ev-input" value="<%= user ? user.email : 'admin@evcharge.vn' %>" readonly>
+            </div>
+          </div>
+          <div class="row mb-4">
+            <div class="col-md-6">
+              <label class="form-label text-muted">Số điện thoại</label>
+              <input type="text" class="form-control ev-input" value="0987654321" readonly>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-muted">Vai trò</label>
+              <input type="text" class="form-control ev-input" value="<%= user ? user.role : 'Admin' %>" readonly>
+            </div>
+          </div>
+          
+          <h5 class="mb-3 mt-4" style="color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Bảo mật</h5>
+          <div class="mb-4">
+            <button type="button" class="btn btn-primary" onclick="alert('Tính năng đổi mật khẩu đang được phát triển!')"><i class="fas fa-key me-2"></i>Đổi mật khẩu</button>
+            <button type="button" class="btn btn-outline-danger ms-2" onclick="alert('Tính năng xác thực 2 bước (2FA) đang được phát triển!')"><i class="fas fa-shield-alt me-2"></i>Bật 2FA</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

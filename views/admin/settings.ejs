@@ -1,0 +1,53 @@
+<div class="content-header mb-4">
+  <h2>Cài đặt hệ thống</h2>
+</div>
+<div class="row">
+  <div class="col-md-8 offset-md-2">
+    <div class="card ev-card p-4 shadow-sm border-0">
+      <h5 class="mb-4" style="color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fas fa-tools me-2"></i>Cấu hình chung</h5>
+      <form>
+        <div class="mb-3">
+          <label class="form-label text-muted">Tên hệ thống</label>
+          <input type="text" class="form-control ev-input" value="EV Charging Management System" required>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label text-muted">Email hỗ trợ khách hàng</label>
+            <input type="email" class="form-control ev-input" value="support@evcharge.vn">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label text-muted">Hotline</label>
+            <input type="tel" class="form-control ev-input" value="1900 1234">
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted">Phí dịch vụ mặc định (%)</label>
+          <input type="number" class="form-control ev-input" value="5" min="0" max="100">
+        </div>
+        <div class="form-check form-switch mb-4">
+          <input class="form-check-input bg-success border-success" type="checkbox" role="switch" id="maintenanceMode" checked>
+          <label class="form-check-label text-muted ms-2" for="maintenanceMode">Cho phép người dùng đăng ký tài khoản mới</label>
+        </div>
+
+        <h5 class="mb-4 mt-5" style="color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fas fa-credit-card me-2"></i>Cấu hình thanh toán (PayOS)</h5>
+        <div class="mb-3">
+          <label class="form-label text-muted">Client ID</label>
+          <input type="password" class="form-control ev-input" value="************************">
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-muted">API Key</label>
+          <input type="password" class="form-control ev-input" value="************************">
+        </div>
+        <div class="mb-4">
+          <label class="form-label text-muted">Checksum Key</label>
+          <input type="password" class="form-control ev-input" value="************************">
+        </div>
+        
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-outline-secondary me-2">Nhập lại</button>
+          <button type="button" class="btn btn-success" onclick="alert('Lưu cài đặt thành công! Hệ thống sẽ được khởi động lại ngầm.')"><i class="fas fa-save me-2"></i>Lưu thay đổi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

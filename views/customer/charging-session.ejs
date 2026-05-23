@@ -1,0 +1,82 @@
+﻿<% hideNav = true %>
+
+<div class="charging-page">
+  <a href="/customer" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; float: left;">
+    <i class="fas fa-arrow-left"></i> Trang chủ
+  </a>
+  <div style="clear: both;"></div>
+
+  <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">
+    <% if (session.status === 'charging') { %>
+      <span style="color: var(--accent);">⚡ Đang sạc...</span>
+    <% } else { %>
+      <span>Phiên sạc hoàn tất</span>
+    <% } %>
+  </h3>
+  <p style="font-size: 13px; color: var(--text-muted);"><%= session.station ? session.station.name : 'Trạm sạc' %></p>
+
+  <!-- Charging Circle -->
+  <div class="charging-circle-wrapper">
+    <div class="charging-circle" id="chargingCircle" style="--progress: 0%;">
+      <div class="charging-circle-inner">
+        <div class="charging-percent" id="batteryPercent">0%</div>
+        <div class="charging-label">Pin</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="charging-stats">
+    <div class="charging-stat">
+      <div class="charging-stat-value" id="energyValue">0</div>
+      <div class="charging-stat-label">kWh đã sạc</div>
+    </div>
+    <div class="charging-stat">
+      <div class="charging-stat-value" id="powerValue">0</div>
+      <div class="charging-stat-label">kW công suất</div>
+    </div>
+    <div class="charging-stat">
+      <div class="charging-stat-value" id="costValue">0đ</div>
+      <div class="charging-stat-label">Chi phí</div>
+    </div>
+  </div>
+
+  <!-- Time -->
+  <div class="ev-card" style="margin-bottom: 20px;">
+    <div class="d-flex justify-content-between">
+      <div>
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Bắt đầu</div>
+        <div style="font-size: 13px; font-weight: 600;" id="startTime">--:--</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Thời gian</div>
+        <div style="font-size: 13px; font-weight: 600; color: var(--accent);" id="elapsedTime">00:00:00</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Giá/kWh</div>
+        <div style="font-size: 13px; font-weight: 600;"><%= session.pricePerKwh ? session.pricePerKwh.toLocaleString('vi-VN') : '0' %>đ</div>
+      </div>
+    </div>
+  </div>
+
+  <% if (session.status === 'charging') { %>
+    <button class="btn-ev btn-ev-danger" style="width: 100%; padding: 16px;" onclick="stopCharging()" id="stopBtn">
+      <i class="fas fa-stop-circle"></i> Dừng sạc
+    </button>
+  <% } else { %>
+    <div class="ev-alert ev-alert-success">
+      <i class="fas fa-check-circle"></i>
+      Phiên sạc đã hoàn tất! Tổng chi phí: <strong><span id="finalCost"><%= session.totalCost ? session.totalCost.toLocaleString('vi-VN') : '0' %></span>đ</strong>
+    </div>
+    <a href="/customer" class="btn-ev btn-ev-primary" style="width: 100%;">
+      <i class="fas fa-home"></i> Về trang chủ
+    </a>
+  <% } %>
+</div>
+
+<script>
+  const sessionId = '<%= session._id %>';
+  const sessionStatus = '<%= session.status %>';
+  const startTimeRaw = '<%= session.startTime %>';
+</script>
+<script src="/js/charging.js"></script>

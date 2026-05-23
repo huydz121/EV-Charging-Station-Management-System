@@ -1,0 +1,126 @@
+﻿
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 style="font-size: 20px; font-weight: 700;">Quản lý bảo trì</h2>
+  <button class="btn-ev btn-ev-primary" data-bs-toggle="modal" data-bs-target="#createMaintenanceModal">
+    <i class="fas fa-plus"></i> Tạo yêu cầu bảo trì
+  </button>
+</div>
+
+<div class="table-card">
+  <div style="overflow-x: auto;">
+    <table class="ev-table">
+      <thead>
+        <tr>
+          <th>Trạm sạc</th>
+          <th>Loại</th>
+          <th>Mô tả</th>
+          <th>Phụ trách</th>
+          <th>Trạng thái</th>
+          <th>Ngày lên lịch</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (records && records.length > 0) { %>
+          <% records.forEach(function(r) { %>
+            <tr>
+              <td style="font-weight: 600; color: var(--text-primary);"><%= r.station ? r.station.name : 'N/A' %></td>
+              <td>
+                <span class="ev-badge ev-badge-<%= r.type === 'emergency' ? 'danger' : r.type === 'scheduled' ? 'info' : 'warning' %>">
+                  <%= r.type === 'emergency' ? 'Khẩn cấp' : r.type === 'scheduled' ? 'Định kỳ' : 'Kiểm tra' %>
+                </span>
+              </td>
+              <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;"><%= r.description %></td>
+              <td><%= r.assignedTo || '-' %></td>
+              <td>
+                <span class="ev-badge ev-badge-<%= r.status === 'completed' ? 'success' : r.status === 'in_progress' ? 'info' : r.status === 'pending' ? 'warning' : 'danger' %>">
+                  <%= r.status === 'completed' ? 'Hoàn thành' : r.status === 'in_progress' ? 'Đang xử lý' : r.status === 'pending' ? 'Chờ' : 'Hủy' %>
+                </span>
+              </td>
+              <td style="font-size: 12px;"><%= r.scheduledDate ? new Date(r.scheduledDate).toLocaleDateString('vi-VN') : '' %></td>
+              <td>
+                <% if (r.status !== 'completed' && r.status !== 'cancelled') { %>
+                  <div class="d-flex gap-1">
+                    <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="updateMaintenance('<%= r._id %>', 'in_progress')">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button class="btn-ev btn-ev-primary btn-ev-sm" onclick="updateMaintenance('<%= r._id %>', 'completed')">
+                      <i class="fas fa-check"></i>
+                    </button>
+                  </div>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+              <i class="fas fa-tools" style="font-size: 24px; margin-bottom: 8px; display: block;"></i>
+              Không có yêu cầu bảo trì nào
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Create Modal -->
+<div class="modal fade" id="createMaintenanceModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-xl);">
+      <div class="modal-header" style="border-color: var(--border);">
+        <h5 class="modal-title" style="font-weight: 700;">Tạo yêu cầu bảo trì</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="/admin/maintenance" method="POST">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="ev-label">Trạm sạc *</label>
+            <select name="station" class="ev-select" required>
+              <% if (stations) { stations.forEach(function(s) { %>
+                <option value="<%= s._id %>"><%= s.name %></option>
+              <% }) } %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="ev-label">Loại bảo trì</label>
+            <select name="type" class="ev-select">
+              <option value="scheduled">Định kỳ</option>
+              <option value="emergency">Khẩn cấp</option>
+              <option value="inspection">Kiểm tra</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="ev-label">Mô tả *</label>
+            <textarea name="description" class="ev-input" rows="3" required placeholder="Mô tả vấn đề cần bảo trì..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="ev-label">Người phụ trách</label>
+            <input type="text" name="assignedTo" class="ev-input" placeholder="Tên kỹ thuật viên">
+          </div>
+          <div class="mb-3">
+            <label class="ev-label">Ngày lên lịch</label>
+            <input type="date" name="scheduledDate" class="ev-input">
+          </div>
+        </div>
+        <div class="modal-footer" style="border-color: var(--border);">
+          <button type="button" class="btn-ev btn-ev-outline" data-bs-dismiss="modal">Hủy</button>
+          <button type="submit" class="btn-ev btn-ev-primary"><i class="fas fa-save"></i> Tạo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function updateMaintenance(id, status) {
+  fetch('/admin/maintenance/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status })
+  })
+  .then(r => r.json())
+  .then(data => { if (data.success) location.reload(); });
+}
+</script>

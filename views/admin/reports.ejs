@@ -1,0 +1,72 @@
+﻿
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2 style="font-size: 20px; font-weight: 700;">Báo cáo & Thống kê</h2>
+  <form class="d-flex gap-2" method="GET" action="/admin/reports">
+    <input type="date" name="startDate" class="ev-input" style="width: 160px; padding: 10px 14px;" value="<%= startDate %>">
+    <input type="date" name="endDate" class="ev-input" style="width: 160px; padding: 10px 14px;" value="<%= endDate %>">
+    <button type="submit" class="btn-ev btn-ev-primary btn-ev-sm"><i class="fas fa-filter"></i> Lọc</button>
+  </form>
+</div>
+
+<!-- Summary cards -->
+<div class="kpi-grid" style="margin-bottom: 24px;">
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <h3>Tổng phiên sạc</h3>
+      <div class="kpi-value"><%= sessions.length %></div>
+    </div>
+    <div class="kpi-icon blue"><i class="fas fa-bolt"></i></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-info">
+      <h3>Tổng doanh thu</h3>
+      <div class="kpi-value">
+        <% let total = 0; sessions.forEach(function(s) { total += s.totalCost || 0; }); %>
+        <%= total.toLocaleString('vi-VN') %>đ
+      </div>
+    </div>
+    <div class="kpi-icon green"><i class="fas fa-coins"></i></div>
+  </div>
+</div>
+
+<div class="table-card">
+  <div class="table-card-header">
+    <h3>Chi tiết phiên sạc</h3>
+  </div>
+  <div style="overflow-x: auto;">
+    <table class="ev-table">
+      <thead>
+        <tr>
+          <th>Khách hàng</th>
+          <th>Trạm sạc</th>
+          <th>Năng lượng</th>
+          <th>Chi phí</th>
+          <th>Thanh toán</th>
+          <th>Trạng thái</th>
+          <th>Ngày</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% sessions.forEach(function(s) { %>
+          <tr>
+            <td><%= s.user ? s.user.fullName : 'N/A' %></td>
+            <td><%= s.station ? s.station.name : 'N/A' %></td>
+            <td><%= s.energyDelivered ? s.energyDelivered.toFixed(1) : '0' %> kWh</td>
+            <td style="color: var(--accent); font-weight: 600;"><%= s.totalCost ? s.totalCost.toLocaleString('vi-VN') : '0' %>đ</td>
+            <td>
+              <span class="ev-badge ev-badge-<%= s.paymentStatus === 'paid' ? 'success' : s.paymentStatus === 'refunded' ? 'warning' : 'danger' %>">
+                <%= s.paymentStatus === 'paid' ? 'Đã TT' : s.paymentStatus === 'refunded' ? 'Hoàn tiền' : 'Chưa TT' %>
+              </span>
+            </td>
+            <td>
+              <span class="ev-badge ev-badge-<%= s.status === 'completed' ? 'success' : 'info' %>">
+                <%= s.status === 'completed' ? 'Hoàn thành' : s.status %>
+              </span>
+            </td>
+            <td style="font-size: 12px;"><%= s.createdAt ? new Date(s.createdAt).toLocaleDateString('vi-VN') : '' %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
