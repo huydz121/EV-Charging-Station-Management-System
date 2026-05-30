@@ -27,11 +27,10 @@ Hệ thống đã hoàn thiện toàn bộ giao diện cho Khách hàng (Mobile-
   - Hiển thị Toast thông báo ở góc màn hình.
   - Sử dụng thư viện popup SweetAlert2 để xác nhận trước khi Xóa dữ liệu nhằm tránh thao tác nhầm.
 
-## 4. Deploy hệ thống
+## 4. Cấu hình Deploy hệ thống
 - Hệ thống đã được đẩy (push) toàn bộ Source code lên kho lưu trữ **GitHub**.
-- **Cơ sở dữ liệu**: Deploy thành công trên **MongoDB Atlas** (Cloud Database).
-- **Server Application**: Deploy server Node.js lên **Render.com**. 
-- Link truy cập hệ thống online hoạt động ổn định mọi lúc.
+- **Cơ sở dữ liệu**: Đã tích hợp và kết nối thành công với **MongoDB Atlas** (Cloud Database) để lưu trữ dữ liệu online.
+- **Server Application**: Hệ thống được cấu hình và chạy ổn định trên môi trường **Localhost** (Node.js). Đã chuẩn bị sẵn sàng các biến môi trường và cấu hình cần thiết để đẩy lên môi trường mạng thực tế khi có yêu cầu.
 
 ---
 
