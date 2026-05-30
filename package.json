@@ -1,7 +1,7 @@
 {
   "name": "ev-charging-system",
   "version": "1.0.0",
-  "description": "EV Charging Station Management System",
+  "description": "EV Charging Station Management System - Tuan 3",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
