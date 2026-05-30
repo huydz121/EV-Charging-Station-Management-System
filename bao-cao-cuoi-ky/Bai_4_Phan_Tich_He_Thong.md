@@ -1,4 +1,4 @@
-﻿TRƯỜNG ĐẠI HỌC QUY NHƠN
+TRƯỜNG ĐẠI HỌC QUY NHƠN
 KHOA CÔNG NGHỆ THÔNG TIN
 ----- -----
 
@@ -68,9 +68,9 @@ hide circle
 
 **- Lớp Khách hàng (Customer) - Kế thừa từ User:** Quản lý ví tiền cá nhân, xem lịch sử sạc, đánh giá trạm sạc.
 - **Thuộc tính:**
-  - userType: String ("Customer")
+  - userType: String
   - address: String
-  - balance: Float (Số dư ví PayOS)
+  - balance: Float
   - paymentMethods: List
 - **Phương thức:**
   - viewChargingHistory()
@@ -102,8 +102,8 @@ hide circle
 - **Phương thức:**
   - manageCustomers()
   - manageStations()
-  - manageMaintenance()
   - managePricingRates()
+  - manageMaintenance()
 
 *(Mã PlantUML để vẽ hộp xanh lớp Administrator)*
 ```plantuml
@@ -127,7 +127,7 @@ hide circle
   - stationId: String
   - name: String
   - address: String
-  - locationCoordinates: String (Kinh độ, vĩ độ)
+  - locationCoordinates: String
   - totalChargers: Integer
   - operationStatus: String
 - **Phương thức:**
@@ -158,9 +158,9 @@ hide circle
 - **Thuộc tính:**
   - chargerId: String
   - stationId: String
-  - chargerType: String ("AC Normal", "DC Fast")
-  - maxPower: Float (Công suất sạc tối đa - kW)
-  - status: String ("Available", "In Use", "Offline")
+  - chargerType: String
+  - maxPower: Float
+  - status: String
 - **Phương thức:**
   - updateChargerStatus()
   - startChargingProcess()
@@ -192,7 +192,7 @@ hide circle
   - customerId: String
   - licensePlate: String
   - vehicleModel: String
-  - batteryCapacity: Float (Dung lượng pin tổng - kWh)
+  - batteryCapacity: Float
 - **Phương thức:**
   - getVehicleInfo()
 
@@ -218,7 +218,7 @@ hide circle
 - **Thuộc tính:**
   - maintenanceId: String
   - stationId: String
-  - chargerId: String (Có thể Null nếu bảo trì toàn trạm)
+  - chargerId: String
   - maintenanceDate: Date
   - status: String
 - **Phương thức:**
@@ -283,7 +283,7 @@ hide circle
   - chargerId: String
   - description: String
   - timestamp: DateTime
-  - status: String ("Reported", "Fixing", "Resolved")
+  - status: String
 - **Phương thức:**
   - reportIncident()
   - updateStatus()
@@ -316,9 +316,9 @@ hide circle
   - vehicleId: String
   - startTime: DateTime
   - endTime: DateTime
-  - energyConsumed: Float (kWh đã sạc)
+  - energyConsumed: Float
   - totalPrice: Float
-  - status: String ("Charging", "Completed", "Payment Pending")
+  - status: String
 - **Phương thức:**
   - startSession()
   - stopSession()
@@ -787,103 +787,9 @@ hide circle
 @enduml
 ```
 
-### 4.1.3 Xác định thuộc tính lớp (Bảng chi tiết)
+### 4.1.3 Xây dựng biểu đồ lớp
 
-**1. Lớp người dùng (User) - Lớp cha**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| userId | String | Mã định danh duy nhất của người dùng |
-| name | String | Họ và tên |
-| gender | String | Giới tính (nam, nữ) |
-| phoneNumber | String | Số điện thoại |
-| email | String | Địa chỉ email (dùng để đăng nhập) |
-| password | String | Mật khẩu đã mã hóa |
-
-**2. Lớp khách hàng (Customer) - Kế thừa User**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| userType | String | Loại người dùng, default “Customer” |
-| address | String | Địa chỉ thường trú |
-| paymentMethods| List<String> | Danh sách phương thức thanh toán |
-| balance | Float | Số dư ví tiền PayOS |
-
-**3. Lớp quản trị viên (Administrator) - Kế thừa User**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| userType | String | Loại người dùng, default “Administrator” |
-| managementPermissions| List<String> | Danh sách các quyền quản trị |
-
-**4. Lớp trạm sạc (ChargingStation)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| stationId | String | Mã định danh duy nhất của trạm |
-| name | String | Tên trạm |
-| address | String | Địa chỉ chi tiết |
-| locationCoordinates| String | Tọa độ (kinh độ, vĩ độ) |
-| totalChargers | Integer | Tổng số trụ sạc tại trạm |
-| operationStatus| String | Trạng thái hoạt động |
-
-**5. Lớp trụ sạc (Charger)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| chargerId | String | Mã định danh duy nhất của trụ sạc |
-| stationId | String | Mã trạm sạc mà trụ này thuộc về |
-| chargerType | String | Loại trụ (AC Normal, DC Fast) |
-| maxPower | Float | Công suất tối đa (kW) |
-| status | String | Trạng thái hiện tại |
-
-**6. Lớp phương tiện (ElectricVehicle)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| vehicleId | String | Mã định danh duy nhất của xe |
-| customerId | String | Mã khách hàng sở hữu |
-| licensePlate | String | Biển số xe |
-| vehicleModel | String | Mẫu xe |
-| batteryCapacity| Float | Dung lượng pin |
-
-**7. Lớp Bảo Trì Trạm Sạc (StationMaintenance)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| maintenanceId | String | Mã phiếu bảo trì |
-| stationId | String | Mã trạm được bảo trì |
-| chargerId | String | Mã trụ sạc cụ thể (có thể null) |
-| maintenanceDate| Date | Ngày dự kiến bảo trì |
-| status | String | Trạng thái (Scheduled, Completed) |
-
-**8. Lớp Đặt Chỗ Sạc (Reservation)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| reservationId | String | Mã đặt chỗ |
-| customerId | String | Mã khách hàng đặt chỗ |
-| chargerId | String | Mã trụ sạc được đặt |
-| reservedStartTime| DateTime | Thời gian bắt đầu đặt chỗ |
-| reservedEndTime| DateTime | Thời gian kết thúc đặt chỗ |
-| status | String | Trạng thái (Active, Expired) |
-
-**9. Lớp Sự Cố Trạm Sạc (StationIncident)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| incidentId | String | Mã sự cố |
-| stationId | String | Mã trạm xảy ra sự cố |
-| chargerId | String | Mã trụ sạc |
-| description | String | Mô tả sự cố |
-| timestamp | DateTime | Thời điểm báo cáo |
-| status | String | Trạng thái xử lý |
-
-**10. Lớp Quản Lý Phiên Sạc (ChargingSession)**
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-| :--- | :--- | :--- |
-| sessionId | String | Mã phiên sạc |
-| customerId | String | Mã khách hàng thực hiện |
-| chargerId | String | Mã trụ sạc được sử dụng |
-| vehicleId | String | Mã phương tiện đang sạc |
-| startTime | DateTime | Thời điểm bắt đầu sạc |
-| endTime | DateTime | Thời điểm kết thúc sạc |
-| energyConsumed| Float | Lượng điện tiêu thụ (kWh) |
-| totalPrice | Float | Tổng tiền phải trả |
-| status | String | Trạng thái phiên sạc |
-
-### 4.1.4 Biểu đồ lớp hoàn chỉnh
+![Biểu đồ lớp phân tích](./class_diagram.png)
 
 Dưới đây là Sơ đồ lớp Tổng thể bao gồm toàn bộ 10 Lớp, các Thuộc tính, Phương thức và đầy đủ các mối Quan hệ:
 
@@ -1032,710 +938,100 @@ Customer ..> ChargingStation
 @enduml
 ```
 
----
+### 4.1.4 Xác định thuộc tính lớp
 
-## 4.2 Phân tích động
+**1. Lớp người dùng (User) - Lớp cha**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| userId | String | Mã định danh duy nhất của người dùng |
+| name | String | Họ và tên |
+| gender | String | Giới tính (nam, nữ) |
+| phoneNumber | String | Số điện thoại |
+| email | String | Địa chỉ email (dùng để đăng nhập) |
+| password | String | Mật khẩu đã mã hóa |
 
-### 4.2.1 Xây dựng biểu đồ trạng thái (Activity Diagram)
+**2. Lớp khách hàng (Customer) - Kế thừa User**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| userType | String | Loại người dùng, mặc định "Customer" |
+| address | String | Địa chỉ thường trú |
+| paymentMethods| List<String> | Danh sách phương thức thanh toán |
+| balance | Float | Số dư ví tiền PayOS |
 
-**- Quản lý tài khoản**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
+**3. Lớp quản trị viên (Administrator) - Kế thừa User**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| userType | String | Loại người dùng, mặc định "Administrator" |
+| managementPermissions| List<String> | Danh sách các quyền quản trị |
 
-start
-:Chọn giao diện quản lý tài khoản;
-note right: Hiển thị danh sách người dùng
-:Tìm kiếm tài khoản cần quản lý;
-note right: Hiển thị kết quả tìm kiếm
+**4. Lớp trạm sạc (ChargingStation)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| stationId | String | Mã định danh duy nhất của trạm |
+| name | String | Tên trạm |
+| address | String | Địa chỉ chi tiết |
+| locationCoordinates| String | Tọa độ (kinh độ, vĩ độ) |
+| totalChargers | Integer | Tổng số trụ sạc tại trạm |
+| operationStatus| String | Trạng thái hoạt động |
 
-if (Tài khoản) then (Không tồn tại)
-  :Tìm kiếm thất bại;
-  note right: Thực hiện lại thao tác
-  :Chọn giao diện quản lý tài khoản;
-else (Tồn tại)
-  :Chỉnh sửa hoặc vô hiệu hóa tài khoản;
-  note right: Gửi yêu cầu
-  :Xác nhận thao tác;
-  if (Thao tác) then (Vô hiệu hóa)
-    :Tài khoản người dùng bị vô hiệu hóa;
-    note bottom: Gửi thông báo đến người dùng
-  else (Cập nhật thông tin)
-    :Cập nhật thành công;
-  endif
-  :Thoát khỏi quản lý tài khoản;
-  stop
-endif
-@enduml
-```
+**5. Lớp trụ sạc (Charger)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| chargerId | String | Mã định danh duy nhất của trụ sạc |
+| stationId | String | Mã trạm sạc mà trụ này thuộc về |
+| chargerType | String | Loại trụ (AC Normal, DC Fast) |
+| maxPower | Float | Công suất tối đa (kW) |
+| status | String | Trạng thái hiện tại |
 
-**- Quản lý trạm sạc**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
+**6. Lớp phương tiện (ElectricVehicle)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| vehicleId | String | Mã định danh duy nhất của xe |
+| customerId | String | Mã khách hàng sở hữu |
+| licensePlate | String | Biển số xe |
+| vehicleModel | String | Mẫu xe |
+| batteryCapacity| Float | Dung lượng pin |
 
-start
-:Chọn giao diện quản lý trạm sạc;
-note right: Hiển thị danh sách trạm sạc hiện có
-:Chọn thêm, sửa hoặc xóa trạm sạc;
+**7. Lớp Bảo Trì Trạm Sạc (StationMaintenance)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| maintenanceId | String | Mã phiếu bảo trì |
+| stationId | String | Mã trạm được bảo trì |
+| chargerId | String | Mã trụ sạc cụ thể (có thể null) |
+| maintenanceDate| Date | Ngày dự kiến bảo trì |
+| status | String | Trạng thái (Scheduled, Completed) |
 
-if (Lỗi hệ thống) then (Có)
-  :Lỗi hệ thống;
-  note right: Thực hiện lại thao tác
-  :Chọn giao diện quản lý trạm sạc;
-else (Không)
-  if (Thao tác) then (Xác nhận xóa trạm sạc)
-    :Xác nhận xóa;
-    :Xác nhận lưu thay đổi;
-  else (Hệ thống kiểm tra dữ liệu và tự cập nhật)
-    :Xác nhận lưu thay đổi;
-  endif
-  :Cập nhật vào cơ sở dữ liệu;
-  :Cập nhật thành công;
-  stop
-endif
-@enduml
-```
+**8. Lớp Đặt Chỗ Sạc (Reservation)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| reservationId | String | Mã đặt chỗ |
+| customerId | String | Mã khách hàng đặt chỗ |
+| chargerId | String | Mã trụ sạc được đặt |
+| reservedStartTime| DateTime | Thời gian bắt đầu đặt chỗ |
+| reservedEndTime| DateTime | Thời gian kết thúc đặt chỗ |
+| status | String | Trạng thái (Active, Expired) |
 
-**- Quản lý bảo trì**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
+**9. Lớp Sự Cố Trạm Sạc (StationIncident)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| incidentId | String | Mã sự cố |
+| stationId | String | Mã trạm xảy ra sự cố |
+| chargerId | String | Mã trụ sạc |
+| description | String | Mô tả sự cố |
+| timestamp | DateTime | Thời điểm báo cáo |
+| status | String | Trạng thái xử lý |
 
-start
-:Chọn bảo trì trạm sạc;
-note right: Hiển thị giao diện bảo trì trạm sạc
-:Chọn trạm sạc và xem lịch bảo trì;
-
-if (Tình trạng) then (Không có trạm sạc cần bảo trì)
-  :Không có trạm sạc cần bảo trì;
-  :Thoát khỏi giao diện;
-  stop
-else (Hiển thị chi tiết tình trạng trạm sạc)
-  :Cập nhật trạng thái bảo trì trạm sạc;
-  if (Kết quả) then (Lỗi cập nhật)
-    :Cập nhật thất bại;
-    note right: Thực hiện lại thao tác
-    :Chọn bảo trì trạm sạc;
-  else (Xử lý thành công)
-    :Cập nhật trạng thái thành công;
-    :Thoát khỏi giao diện;
-    stop
-  endif
-endif
-@enduml
-```
-
-**- Quản lý Giá Cước**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
-
-start
-:Chọn quản lý giá cước điện;
-note right: Hiển thị giao diện quản lý giá cước
-:Thiết lập, thay đổi giá cước theo khung giờ;
-
-if (Xác nhận) then (Chưa được kiểm định/Hủy)
-  :Hủy thay đổi;
-  note right: Thực hiện lại thao tác
-  :Chọn quản lý giá cước điện;
-else (Kiểm tra dữ liệu và tự cập nhật)
-  :Cập nhật thành công;
-  :Thoát khỏi quản lý giá cước;
-  stop
-endif
-@enduml
-```
-
-**- Khởi động sạc**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
-
-start
-:Quét mã QR tại cổng sạc;
-note right: Gửi yêu cầu khởi động
-:Hệ thống kiểm tra thông tin kết nối;
-
-if (Kết nối) then (Cáp chưa cắm/Lỗi mạng)
-  :Thông báo lỗi kết nối;
-  note right: Yêu cầu thao tác lại
-  :Quét mã QR tại cổng sạc;
-else (Hiển thị thông tin cổng sạc)
-  :Xác nhận bắt đầu sạc;
-  if (Số dư ví) then (Không đủ)
-    :Thông báo số dư thấp;
-    :Hướng dẫn nạp tiền;
-    stop
-  else (Gửi lệnh đến trạm sạc)
-    :Trạm sạc đóng rơ le, cấp điện;
-    note right: Cập nhật màn hình
-    :Hiển thị tiến trình sạc theo thời gian thực;
-    note right: Người dùng bấm dừng hoặc Pin đầy
-    :Kết thúc phiên sạc;
-    stop
-  endif
-endif
-@enduml
-```
-
-**- Đặt chỗ trước**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
-
-start
-:Mở chức năng tìm trạm sạc;
-note right: Hiển thị bản đồ / danh sách trạm
-:Chọn trạm sạc và cổng sạc muốn đặt;
-
-if (Tình trạng cổng) then (Đang sử dụng/Lỗi)
-  :Thông báo cổng không khả dụng;
-  note right: Đề xuất cổng khác
-  :Chọn trạm sạc và cổng sạc muốn đặt;
-else (Hiển thị thông tin giữ chỗ (giới hạn 30 phút))
-  :Xác nhận đặt chỗ;
-  note right: Hệ thống khóa cổng tạm thời
-  :Cập nhật trạng thái "Đã đặt";
-  if (Hành động khách hàng) then (Chuyển trạng thái)
-    :Sẵn sàng sạc điện;
-    stop
-  else (Hủy tự động)
-    :Mở khóa cổng, trừ điểm tín nhiệm;
-    stop
-  endif
-endif
-@enduml
-```
-
-**- Thanh toán**
-```plantuml
-@startuml
-skinparam activityBackgroundColor #E0FFFF
-skinparam activityBorderColor #008B8B
-skinparam arrowColor #2F4F4F
-
-start
-:Nhận thông báo kết thúc sạc;
-note right: Hiển thị hóa đơn chi tiết (kWh, số tiền)
-:Giao diện chọn phương thức thanh toán;
-
-if (Tùy chọn) then (Kiểm tra số dư)
-  if (Đủ tiền?) then (Không đủ)
-    :Yêu cầu nạp thêm tiền;
-  else (Đủ)
-    :Trừ tiền tự động;
-  endif
-else (Chuyển hướng VNPay/MoMo)
-  :Xác thực giao dịch;
-endif
-
-if (Kết quả thanh toán) then (Lỗi ngân hàng)
-  :Thanh toán thất bại;
-  note right: Yêu cầu thử lại
-  :Giao diện chọn phương thức thanh toán;
-else (Cập nhật trạng thái hóa đơn)
-  :Lưu lịch sử và gửi biên lai;
-  note right: Mở khóa ngàm cáp
-  :Khách hàng rút súng sạc rời đi;
-  stop
-endif
-@enduml
-```
+**10. Lớp Quản Lý Phiên Sạc (ChargingSession)**
+| Thuộc tính | Kiểu dữ liệu | Mô tả |
+| :--- | :--- | :--- |
+| sessionId | String | Mã phiên sạc |
+| customerId | String | Mã khách hàng thực hiện |
+| chargerId | String | Mã trụ sạc được sử dụng |
+| vehicleId | String | Mã phương tiện đang sạc |
+| startTime | DateTime | Thời điểm bắt đầu sạc |
+| endTime | DateTime | Thời điểm kết thúc sạc |
+| energyConsumed| Float | Lượng điện tiêu thụ (kWh) |
+| totalPrice | Float | Tổng tiền phải trả |
+| status | String | Trạng thái phiên sạc |
 
 ---
-
-### 4.2.2 Xây dựng biểu đồ tuần tự (Sequence Diagram)
-
-**- Quản lý tài khoản**
-```plantuml
-@startuml
-actor Admin
-participant "System" as System
-participant "Database" as DB
-actor User
-
-Admin -> System: 1.1. Mở giao diện quản lý người dùng
-System -> DB: 1.2. Lấy danh sách người dùng
-DB --> System: 1.3. Trả về danh sách người dùng
-System --> Admin: 1.4. Hiển thị danh sách người dùng
-
-Admin -> System: 2.1. Tìm kiếm tài khoản cần quản lý
-System -> DB: 2.2. Truy vấn thông tin tài khoản
-DB --> System: 2.3. Trả về kết quả tìm kiếm
-System --> Admin: 2.4. Hiển thị kết quả tìm kiếm
-
-Admin -> System: 3.1. Chỉnh sửa hoặc vô hiệu hóa tài khoản
-System -> DB: 3.2. Cập nhật thông tin tài khoản
-DB --> System: 3.3. Xác nhận cập nhật thành công
-System --> Admin: 3.4. Thông báo cập nhật thành công
-System -> User: 3.4.1. Gửi thông báo vô hiệu hóa tài khoản
-@enduml
-```
-
-**- Quản lý trạm sạc**
-```plantuml
-@startuml
-actor Admin
-participant "System" as System
-participant "Database" as DB
-
-Admin -> System: 1.1. Mở giao diện quản lý trạm sạc
-System -> DB: 1.2. Lấy danh sách trạm sạc
-DB --> System: 1.3. Trả về danh sách trạm sạc
-System --> Admin: 1.4. Hiển thị danh sách trạm sạc
-
-Admin -> System: 2.1. Thêm, sửa hoặc xóa trạm sạc
-System -> DB: 2.2. Kiểm tra và cập nhật dữ liệu trạm sạc
-DB --> System: 2.3. Xác nhận cập nhật thành công
-System --> Admin: 2.4. Thông báo thao tác thành công
-System --> Admin: 2.4.1. Hiển thị cảnh báo và yêu cầu xác nhận (Nếu xóa trạm đang hoạt động)
-@enduml
-```
-
-**- Quản lý bảo trì**
-```plantuml
-@startuml
-actor Admin
-participant "System" as System
-participant "Database" as DB
-actor User
-
-Admin -> System: 1.1. Mở giao diện bảo trì trạm sạc
-System -> DB: 1.2. Lấy danh sách trạm sạc
-DB --> System: 1.3. Trả về danh sách trạm sạc
-System --> Admin: 1.4. Hiển thị danh sách trạm sạc
-
-Admin -> System: 2.1. Chọn trạm sạc cần bảo trì
-System -> DB: 2.2. Truy xuất thông tin trạm sạc
-DB --> System: 2.3. Trả về dữ liệu trạm sạc
-System --> Admin: 2.4. Hiển thị chi tiết trạm sạc
-
-Admin -> System: 3.1. Cập nhật trạng thái bảo trì
-System -> DB: 3.2. Lưu thông tin bảo trì
-DB --> System: 3.3. Xác nhận cập nhật thành công
-System --> Admin: 3.4. Thông báo cập nhật thành công
-System -> User: 4. Gửi thông báo (Trạm sạc đang bảo trì)
-@enduml
-```
-
-**- Quản lý Giá Cước**
-```plantuml
-@startuml
-actor Admin
-participant "System" as System
-participant "Database" as DB
-
-Admin -> System: 1.1. Mở giao diện quản lý giá cước
-System -> DB: 1.2. Lấy giá cước hiện tại
-DB --> System: 1.3. Trả về dữ liệu giá cước
-System --> Admin: 1.4. Hiển thị giá cước hiện tại
-
-Admin -> System: 2.1. Thêm, sửa giá cước theo khung giờ
-System -> DB: 2.2. Kiểm tra và cập nhật dữ liệu giá
-DB --> System: 2.3. Xác nhận cập nhật thành công
-System --> Admin: 2.4. Thông báo thao tác thành công
-System --> Admin: 2.4.1. Hiển thị cảnh báo và yêu cầu xác nhận (Nếu áp dụng ngay lập tức)
-@enduml
-```
-
-**- Khởi động sạc**
-```plantuml
-@startuml
-actor User
-participant "System" as System
-participant "Database" as DB
-actor Hardware
-
-User -> System: 1.1. Mở ứng dụng & Quét mã QR
-System -> DB: 1.2. Truy vấn trạng thái cổng sạc & thông tin người dùng
-DB --> System: 1.3. Trả về dữ liệu cổng sạc & số dư
-System --> User: 1.4. Hiển thị chi tiết cổng sạc và xác nhận bắt đầu
-
-User -> System: 2.1. Xác nhận bắt đầu sạc
-System -> DB: 2.2. Tạo phiên sạc mới
-DB --> System: 2.3. Xác nhận đã tạo phiên sạc
-System -> Hardware: 2.4. Gửi lệnh mở khóa rơ le
-Hardware --> System: 2.5. Xác nhận rơ le đã mở
-System --> User: 2.6. Thông báo thao tác thành công
-System --> User: 2.6.1. Hiển thị bảng điều khiển sạc trực tiếp
-@enduml
-```
-
-**- Đặt chỗ trước**
-```plantuml
-@startuml
-actor User
-participant "System" as System
-participant "Database" as DB
-
-User -> System: 1.1. Mở giao diện tìm kiếm trạm sạc
-System -> DB: 1.2. Lấy danh sách trạm sạc/cổng sạc khả dụng
-DB --> System: 1.3. Trả về danh sách trạm sạc/cổng sạc
-System --> User: 1.4. Hiển thị bản đồ/danh sách trạm sạc
-
-User -> System: 2.1. Yêu cầu đặt chỗ một cổng sạc
-System -> DB: 2.2. Kiểm tra yêu cầu và cập nhật trạng thái cổng (Đã đặt)
-DB --> System: 2.3. Xác nhận cập nhật thành công
-System --> User: 2.4. Thông báo đặt chỗ thành công
-System --> User: 2.4.1. Hiển thị thời gian giữ chỗ (30 phút)
-@enduml
-```
-
-**- Thanh toán**
-```plantuml
-@startuml
-actor User
-participant "System" as System
-participant "Database" as DB
-actor PaymentGateway
-
-User -> System: 1.1. Chọn giao diện thanh toán cho phiên sạc đã kết thúc
-System -> DB: 1.2. Lấy chi tiết hóa đơn phiên sạc
-DB --> System: 1.3. Trả về chi tiết hóa đơn
-System --> User: 1.4. Hiển thị hóa đơn và các phương thức thanh toán
-
-User -> System: 2.1. Chọn phương thức thanh toán và xác nhận
-System -> PaymentGateway: 2.2. Xử lý giao dịch thanh toán
-PaymentGateway --> System: 2.3. Trả về kết quả giao dịch thành công
-System -> DB: 2.4. Cập nhật trạng thái hóa đơn thành "Đã thanh toán"
-DB --> System: 2.5. Xác nhận cập nhật trạng thái
-System --> User: 2.6. Thông báo thanh toán thành công
-System --> User: 2.6.1. Hiển thị biên lai điện tử và yêu cầu rút súng sạc
-@enduml
-```
-
----
-
-### 4.2.3 Bổ sung thuộc tính, phương thức vào các lớp
-
-Ở giai đoạn này, các lớp được bổ sung chi tiết các phương thức (hành vi) và mức độ truy cập (Public `+`, Private `-`).
-
-**- Lớp Người Sử Dụng (User) - Lớp Cha**
-Cho phép người dùng đăng ký, đăng nhập và cập nhật thông tin cá nhân.
-- **Thuộc tính:**
-  - `userID: String`
-  - `name: String`
-  - `phoneNumber: String`
-  - `email: String`
-  - `password: String`
-  - `status: String`
-- **Phương thức:**
-  - `login()`
-  - `register()`
-  - `updateInformation()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class User {
-  + userID: String
-  + name: String
-  + phoneNumber: String
-  + email: String
-  + password: String
-  + status: String
-  --
-  + login()
-  + register()
-  + updateInformation()
-}
-@enduml
-```
-
-**- Lớp Quản Trị Viên (Administrator) - Thừa kế từ User**
-Quản lý khách hàng, các trạm sạc, lịch bảo trì và giá cước.
-- **Thuộc tính:**
-  - `managementPermissions: List`
-- **Phương thức:**
-  - `manageCustomers()`
-  - `manageStations()`
-  - `manageMaintenance()`
-  - `manageFareRates()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class Administrator {
-  + managementPermissions: List
-  --
-  + manageCustomers()
-  + manageStations()
-  + manageMaintenance()
-  + manageFareRates()
-}
-@enduml
-```
-
-**- Lớp Khách Hàng (Customer) - Thừa kế từ User**
-Thực hiện các thao tác đặt chỗ sạc, thanh toán và xem lịch sử sạc.
-- **Thuộc tính:**
-  - `customerID: String`
-  - `vehicleInfo: String`
-  - `address: String`
-  - `paymentMethods: List`
-  - `rewardPoints: Integer`
-- **Phương thức:**
-  - `viewChargingHistory()`
-  - `rateStation()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class Customer {
-  + customerID: String
-  + vehicleInfo: String
-  + address: String
-  + paymentMethods: List
-  + rewardPoints: Integer
-  --
-  + viewChargingHistory()
-  + rateStation()
-}
-@enduml
-```
-
-**- Lớp Trạm Sạc (ChargingStation)**
-Lưu trữ thông tin về một khu vực trạm sạc (bao gồm nhiều cổng sạc).
-- **Thuộc tính:**
-  - `stationID: String`
-  - `stationName: String`
-  - `location: String`
-  - `totalChargers: Integer`
-  - `status: String`
-- **Phương thức:**
-  - `updateStationStatus()`
-  - `getChargingSlots()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class ChargingStation {
-  + stationID: String
-  + stationName: String
-  + location: String
-  + totalChargers: Integer
-  + status: String
-  --
-  + updateStationStatus()
-  + getChargingSlots()
-}
-@enduml
-```
-
-**- Lớp Cổng Sạc / Trụ Sạc (Charger)**
-Quản lý thiết bị phần cứng cung cấp điện lưới cho xe.
-- **Thuộc tính:**
-  - `chargerID: String`
-  - `stationID: String`
-  - `chargerType: String`
-  - `powerOutput: Float`
-  - `status: String`
-- **Phương thức:**
-  - `checkConnection()`
-  - `startPowerSupply()`
-  - `stopPowerSupply()`
-  - `transmitData()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class Charger {
-  + chargerID: String
-  + stationID: String
-  + chargerType: String
-  + powerOutput: Float
-  + status: String
-  --
-  + checkConnection()
-  + startPowerSupply()
-  + stopPowerSupply()
-  + transmitData()
-}
-@enduml
-```
-
-**- Lớp Phiên Sạc (ChargingSession)**
-Theo dõi một giao dịch sạc xe cụ thể của khách hàng.
-- **Thuộc tính:**
-  - `sessionID: String`
-  - `customerID: String`
-  - `chargerID: String`
-  - `status: String`
-  - `startTime: DateTime`
-  - `endTime: DateTime`
-  - `energyConsumed: Float`
-  - `totalPrice: Float`
-- **Phương thức:**
-  - `startSession()`
-  - `stopSession()`
-  - `makePayment()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class ChargingSession {
-  + sessionID: String
-  + customerID: String
-  + chargerID: String
-  + status: String
-  + startTime: DateTime
-  + endTime: DateTime
-  + energyConsumed: Float
-  + totalPrice: Float
-  --
-  + startSession()
-  + stopSession()
-  + makePayment()
-}
-@enduml
-```
-
-**- Lớp Hóa Đơn Thanh Toán (PaymentInvoice)**
-Quản lý quá trình thanh toán chi phí của mỗi phiên sạc.
-- **Thuộc tính:**
-  - `invoiceID: String`
-  - `sessionID: String`
-  - `amount: Float`
-  - `paymentMethod: String`
-  - `timestamp: DateTime`
-  - `status: String`
-- **Phương thức:**
-  - `processPayment()`
-  - `generateReceipt()`
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-class PaymentInvoice {
-  + invoiceID: String
-  + sessionID: String
-  + amount: Float
-  + paymentMethod: String
-  + timestamp: DateTime
-  + status: String
-  --
-  + processPayment()
-  + generateReceipt()
-}
-@enduml
-```
-
----
-
-### 4.2.4 Vẽ lại biểu đồ lớp hoàn chỉnh
-
-*(Đây là biểu đồ lớp hoàn chỉnh theo mẫu màu vàng, tập trung vào 7 lớp nghiệp vụ chính yếu nhất).*
-
-```plantuml
-@startuml
-skinparam classBackgroundColor #FFE4B5
-skinparam classBorderColor #B8860B
-
-class User {
-  + userID: String
-  + name: String
-  + phoneNumber: String
-  + email: String
-  + password: String
-  + status: String
-  + login()
-  + register()
-  + updateInformation()
-}
-
-class Administrator {
-  + managementPermissions: List
-  + manageCustomers()
-  + manageStations()
-  + manageMaintenance()
-  + manageFareRates()
-}
-
-class Customer {
-  + customerID: String
-  + vehicleInfo: String
-  + address: String
-  + paymentMethods: List
-  + rewardPoints: Integer
-  + viewChargingHistory()
-  + rateStation()
-}
-
-class ChargingStation {
-  + stationID: String
-  + stationName: String
-  + location: String
-  + totalChargers: Integer
-  + status: String
-  + updateStationStatus()
-  + getChargingSlots()
-}
-
-class Charger {
-  + chargerID: String
-  + stationID: String
-  + chargerType: String
-  + powerOutput: Float
-  + status: String
-  + checkConnection()
-  + startPowerSupply()
-  + stopPowerSupply()
-  + transmitData()
-}
-
-class ChargingSession {
-  + sessionID: String
-  + customerID: String
-  + chargerID: String
-  + status: String
-  + startTime: DateTime
-  + endTime: DateTime
-  + energyConsumed: Float
-  + totalPrice: Float
-  + startSession()
-  + stopSession()
-  + makePayment()
-}
-
-class PaymentInvoice {
-  + invoiceID: String
-  + sessionID: String
-  + amount: Float
-  + paymentMethod: String
-  + timestamp: DateTime
-  + status: String
-  + processPayment()
-  + generateReceipt()
-}
-
-User <|-- Customer : Extends
-User <|-- Administrator : Extends
-
-Customer "1" -- "1..*" ChargingSession
-ChargingSession "1" -- "1" PaymentInvoice
-ChargingStation "1" *-- "1..*" Charger
-Charger "1" -- "1..*" ChargingSession
-@enduml
-```
-

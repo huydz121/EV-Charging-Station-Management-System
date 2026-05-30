@@ -17,6 +17,8 @@
 @startuml UseCase_Diagram
 left to right direction
 skinparam backgroundColor white
+skinparam ranksep 60
+skinparam nodesep 12
 skinparam usecase {
   BackgroundColor #FAFAFA
   BorderColor #333333
@@ -26,45 +28,47 @@ skinparam actor {
 }
 
 actor "Khách hàng" as KH
-actor "Quản trị viên" as QTV
-actor "PayOS" as PayOS
+actor "Quản trị viên\n(Admin)" as QTV
+actor "Cổng thanh toán (PayOS)" as PayOS
+actor "Hệ thống Mail (SMTP)" as SMTP
 
 rectangle "Hệ thống Quản lý Trạm Sạc Xe Điện" {
-
-  usecase "Đăng ký tài khoản" as UC01
-  usecase "Xác thực OTP" as UC01_1
-  usecase "Đăng nhập" as UC02
-  usecase "Quên mật khẩu" as UC03
-  usecase "Gửi OTP khôi phục" as UC03_1
-  usecase "Đặt lại mật khẩu" as UC03_2
-  usecase "Đăng xuất" as UC04
-
-  usecase "Tìm trạm sạc\ntrên bản đồ" as UC05
-  usecase "Đặt chỗ sạc" as UC06
-  usecase "Bắt đầu phiên sạc" as UC07
-  usecase "Theo dõi sạc\nthời gian thực" as UC07_1
-  usecase "Dừng sạc &\nchốt hóa đơn" as UC07_2
-  usecase "Nạp tiền ví\nđiện tử" as UC08
-  usecase "Xem lịch sử\ngiao dịch" as UC09
-  usecase "Quản lý hồ sơ\ncá nhân" as UC10
-
-  usecase "Dashboard\nthống kê" as UC11
-  usecase "Quản lý\ntrạm sạc" as UC12
-  usecase "Thêm trạm sạc" as UC12_1
-  usecase "Sửa trạm sạc" as UC12_2
-  usecase "Xóa trạm sạc" as UC12_3
-  usecase "Quản lý\nngười dùng" as UC13
-  usecase "Cấu hình\nbảng giá" as UC14
-  usecase "Báo cáo\nkế toán" as UC15
-  usecase "Quản lý\nbảo trì" as UC16
-  usecase "Xử lý\nhoàn tiền" as UC17
+  usecase "Đăng ký tài khoản\n(UC01)" as UC01
+  usecase "Xác thực OTP Email\n(UC01_1)" as UC01_1
+  usecase "Đăng nhập hệ thống\n(UC02)" as UC02
+  usecase "Quên mật khẩu\n(UC03)" as UC03
+  usecase "Gửi OTP khôi phục\n(UC03_1)" as UC03_1
+  usecase "Đặt lại mật khẩu mới\n(UC03_2)" as UC03_2
+  usecase "Đăng xuất\n(UC04)" as UC04
+  
+  usecase "Xem Trang chủ Khách hàng\n(UC04_1)" as UC04_1
+  usecase "Tìm trạm sạc trên bản đồ tương tác\n(UC05)" as UC05
+  usecase "Xem chi tiết & Đặt chỗ sạc\n(UC06)" as UC06
+  usecase "Bắt đầu phiên sạc\n(UC07)" as UC07
+  usecase "Theo dõi tiến trình sạc thời gian thực\n(UC07_1)" as UC07_1
+  usecase "Dừng sạc & chốt hóa đơn (Thanh toán)\n(UC07_2)" as UC07_2
+  usecase "Nạp tiền ví bằng VietQR\n(UC08)" as UC08
+  usecase "Xem lịch sử giao dịch\n(UC09)" as UC09
+  usecase "Quản lý hồ sơ cá nhân & Đổi mật khẩu\n(UC10)" as UC10
+  
+  usecase "Xem Dashboard tổng quan\n(UC11)" as UC11
+  usecase "Quản lý danh sách trạm sạc\n(UC12)" as UC12
+  usecase "Thêm mới trạm sạc\n(UC12_1)" as UC12_1
+  usecase "Chỉnh sửa thông tin trạm sạc\n(UC12_2)" as UC12_2
+  usecase "Xóa trạm sạc\n(UC12_3)" as UC12_3
+  usecase "Quản lý người dùng\n(UC13)" as UC13
+  usecase "Cấu hình bảng giá & Cài đặt hệ thống\n(UC14)" as UC14
+  usecase "Xem báo cáo doanh thu & Thống kê\n(UC15)" as UC15
+  usecase "Quản lý lịch bảo trì\n(UC16)" as UC16
+  usecase "Xử lý yêu cầu hoàn tiền\n(UC17)" as UC17
 }
 
-' === Quan hệ Tác nhân - UC ===
+' Liên kết Actor -> Use case
 KH -- UC01
 KH -- UC02
 KH -- UC03
 KH -- UC04
+KH -- UC04_1
 KH -- UC05
 KH -- UC06
 KH -- UC07
@@ -82,21 +86,24 @@ QTV -- UC15
 QTV -- UC16
 QTV -- UC17
 
-PayOS -- UC08
-
-' === Quan hệ Include (bao hàm) ===
+' Mối quan hệ giữa các Use Case (Include hướng sang phải, Extend hướng ngược lại sang trái)
 UC01 ..> UC01_1 : <<include>>
 UC03 ..> UC03_1 : <<include>>
 UC03 ..> UC03_2 : <<include>>
 UC07 ..> UC07_1 : <<include>>
 UC07 ..> UC07_2 : <<include>>
 
-' === Quan hệ Extend (mở rộng) ===
-UC12_1 ..> UC12 : <<extend>>
-UC12_2 ..> UC12 : <<extend>>
-UC12_3 ..> UC12 : <<extend>>
+UC12 <.. UC12_1 : <<extend>>
+UC12 <.. UC12_2 : <<extend>>
+UC12 <.. UC12_3 : <<extend>>
+
+' Liên kết các hệ thống phụ trợ (đặt bên phải nằm ngang để tránh chồng chéo dây nối)
+UC08 -right- PayOS
+UC01_1 -right- SMTP
+UC03_1 -right- SMTP
 
 @enduml
+
 
 
 ============================
@@ -113,282 +120,804 @@ UC12_3 ..> UC12 : <<extend>>
 skinparam backgroundColor white
 skinparam classAttributeIconSize 0
 skinparam class {
-  BackgroundColor #FEFEFE
-  BorderColor #333333
-  ArrowColor #333333
+  BackgroundColor #FFE4B5
+  BorderColor #B8860B
+  ArrowColor #B8860B
 }
 
 class User {
-  - _id : ObjectId
-  - fullName : String
-  - email : String
-  - phone : String
-  - password : String
-  - role : String
-  - avatar : String
-  - balance : Number
-  - isActive : Boolean
-  - otp : String
-  - otpExpires : Date
-  - lastLogin : Date
+  + userId: String
+  + name: String
+  + gender: String
+  + phoneNumber: String
+  + email: String
+  + password: String
   --
-  + comparePassword(password : String) : Boolean
-  + pre_save() : void
+  + login()
+  + register()
+  + updateInformation()
 }
 
-class Station {
-  - _id : ObjectId
-  - name : String
-  - address : String
-  - location : GeoJSON
-  - status : String
-  - pricePerKwh : Number
-  - rating : Number
-  - totalSessions : Number
-  - totalRevenue : Number
-  - description : String
+class Customer {
+  + userType: String
+  + address: String
+  + balance: Float
+  + paymentMethods: List
   --
-  + findNearby(lng, lat, radius) : Station[]
+  + viewChargingHistory()
+  + rateStation()
+  + depositMoney()
 }
 
-class Connector {
-  - type : String
-  - power : Number
-  - status : String
-}
-
-class Vehicle {
-  - _id : ObjectId
-  - name : String
-  - manufacturer : String
-  - licensePlate : String
-  - batteryCapacity : Number
-  - connectorType : String
-  - isDefault : Boolean
-}
-
-class ChargingSession {
-  - _id : ObjectId
-  - connectorIndex : Number
-  - status : String
-  - startTime : Date
-  - endTime : Date
-  - energyDelivered : Number
-  - targetEnergy : Number
-  - currentPower : Number
-  - batteryStart : Number
-  - batteryEnd : Number
-  - pricePerKwh : Number
-  - totalCost : Number
-  - paymentStatus : String
+class Administrator {
+  + managementPermissions: List
   --
-  + startCharging() : void
-  + getChargingStatus() : JSON
-  + stopCharging() : void
+  + manageCustomers()
+  + manageStations()
+  + managePricingRates()
+  + manageMaintenance()
 }
 
-class Payment {
-  - _id : ObjectId
-  - type : String
-  - amount : Number
-  - method : String
-  - status : String
-  - payosOrderCode : Number
-  - description : String
-  - transactionDate : Date
+class ChargingStation {
+  + stationId: String
+  + name: String
+  + address: String
+  + locationCoordinates: String
+  + totalChargers: Integer
+  + operationStatus: String
   --
-  + createTopup() : PaymentLink
-  + checkTopupStatus() : String
-  + verifyWebhook() : Boolean
+  + updateStationStatus()
+  + checkAvailability()
+}
+
+class Charger {
+  + chargerId: String
+  + stationId: String
+  + chargerType: String
+  + maxPower: Float
+  + status: String
+  --
+  + updateChargerStatus()
+  + startChargingProcess()
+  + stopChargingProcess()
+}
+
+class ElectricVehicle {
+  + vehicleId: String
+  + customerId: String
+  + licensePlate: String
+  + vehicleModel: String
+  + batteryCapacity: Float
+  --
+  + getVehicleInfo()
+}
+
+class StationMaintenance {
+  + maintenanceId: String
+  + stationId: String
+  + chargerId: String
+  + maintenanceDate: Date
+  + status: String
+  --
+  + scheduleMaintenance()
+  + updateStatus()
 }
 
 class Reservation {
-  - _id : ObjectId
-  - connectorIndex : Number
-  - scheduledTime : Date
-  - duration : Number
-  - status : String
-  - notes : String
+  + reservationId: String
+  + customerId: String
+  + chargerId: String
+  + reservedStartTime: DateTime
+  + reservedEndTime: DateTime
+  + status: String
+  --
+  + bookSlot()
+  + cancelReservation()
 }
 
-class PriceRate {
-  - _id : ObjectId
-  - name : String
-  - type : String
-  - pricePerKwh : Number
-  - startHour : Number
-  - endHour : Number
-  - isActive : Boolean
+class StationIncident {
+  + incidentId: String
+  + stationId: String
+  + chargerId: String
+  + description: String
+  + timestamp: DateTime
+  + status: String
+  --
+  + reportIncident()
+  + updateStatus()
 }
 
-class Maintenance {
-  - _id : ObjectId
-  - connectorIndex : Number
-  - type : String
-  - description : String
-  - status : String
-  - assignedTo : String
-  - cost : Number
+class ChargingSession {
+  + sessionId: String
+  + customerId: String
+  + chargerId: String
+  + vehicleId: String
+  + startTime: DateTime
+  + endTime: DateTime
+  + energyConsumed: Float
+  + totalPrice: Float
+  + status: String
+  --
+  + startSession()
+  + stopSession()
+  + calculateFee()
+  + processPayment()
 }
 
-' === Quan hệ Hợp thành (Composition) - hình thoi đặc ===
-Station "1" *-- "1..*" Connector : chứa >
+' Quan hệ kế thừa
+User <|-- Customer
+User <|-- Administrator
 
-' === Quan hệ Liên kết (Association) ===
-User "1" -- "0..*" Vehicle : sở hữu >
-User "1" -- "0..*" ChargingSession : thực hiện >
-User "1" -- "0..*" Payment : tạo >
-User "1" -- "0..*" Reservation : đặt chỗ >
-Station "1" -- "0..*" ChargingSession : cung cấp >
-Station "1" -- "0..*" Reservation : nhận >
-Station "1" -- "0..*" Maintenance : bảo trì >
+' Quan hệ Thành phần (Aggregation / Composition)
+ChargingStation *-- "1..*" Charger
 
+' Quan hệ Liên kết
+Customer "1" -- "0..*" ElectricVehicle : sở hữu >
+Customer "1" -- "0..*" Reservation : đặt chỗ >
+Charger "1" -- "0..*" Reservation : nhận >
+Customer "1" -- "0..*" ChargingSession : thực hiện >
+ElectricVehicle "1" -- "0..*" ChargingSession : tham gia >
+Charger "1" -- "0..*" ChargingSession : phục vụ >
+
+ChargingStation "1" -- "0..*" StationMaintenance : bảo trì >
+Charger "1" -- "0..*" StationMaintenance : áp dụng >
+
+ChargingStation "1" -- "0..*" StationIncident : phát sinh >
+Charger "1" -- "0..*" StationIncident : liên quan >
+
+' Quan hệ Phụ thuộc
+Administrator ..> Customer : quản lý >
+Administrator ..> ChargingStation : quản lý >
+Administrator ..> StationMaintenance : theo dõi >
+Administrator ..> StationIncident : xử lý >
+Customer ..> ChargingStation : đánh giá >
 @enduml
 
 
 ============================
-3. BIỂU ĐỒ TRẠNG THÁI (Bài 4)
-   Theo Chương 2 slide 61-62
-   - Trạng thái = HCN tròn góc
-   - Trạng thái khởi đầu = hình tròn đặc
-   - Trạng thái kết thúc = 2 hình tròn lồng nhau
-   - Chuyển tiếp = mũi tên liền nét
+3. BIỂU ĐỒ TRẠNG THÁI VÀ HOẠT ĐỘNG (Bài 4)
+   - Trạng thái vòng đời phiên sạc (Statechart)
+   - Hoạt động của 7 luồng tiến trình nghiệp vụ (Activity)
 ============================
 
 @startuml Statechart_ChargingSession
 skinparam backgroundColor white
 skinparam state {
-  BackgroundColor #FEFEFE
-  BorderColor #333333
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
 }
 
-[*] --> Pending : Khách bấm\n"Bắt đầu sạc"
+[*] --> Cho_Kich_Hoat : Khách bấm "Bắt đầu sạc"
 
-state Pending : entry / Tạo ChargingSession
-state Pending : do / Kiểm tra balance >= 200.000đ
+state Cho_Kich_Hoat : entry / Tạo ChargingSession
+state Cho_Kich_Hoat : do / Kiểm tra số dư >= 200.000đ
 
-state Charging : entry / connector.status = in_use
-state Charging : do / Polling mỗi 2s cập nhật kWh, kW, %
-state Charging : exit / Chốt hóa đơn
+state Dang_Sac : entry / Khóa súng sạc (connector.status = in_use)
+state Dang_Sac : do / Cập nhật liên tục số điện kWh, công suất kW
+state Dang_Sac : exit / Chốt hóa đơn tiền sạc
 
-state Completed : entry / paymentStatus = paid
-state Completed : do / Trừ balance, giải phóng connector
+state Da_Hoan_Thanh : entry / Trạng thái thanh toán = Đã thanh toán
+state Da_Hoan_Thanh : do / Trừ số dư tài khoản, giải phóng cổng sạc
 
-state Cancelled : entry / Không phát sinh chi phí
+state Da_Huy : entry / Giải phóng cổng sạc, không trừ tiền
 
-state Error : entry / Ghi log lỗi
-state Error : do / Thông báo Admin xử lý
+state Loi_He_Thong : entry / Ghi nhận mã lỗi sự cố
+state Loi_He_Thong : do / Thông báo cho Quản trị viên xử lý
 
-Pending --> Charging : [balance >= 200.000đ\n& connector = available]
-Pending --> Cancelled : Khách hủy
-Charging --> Completed : Đạt targetEnergy\nhoặc bấm "Dừng sạc"
-Charging --> Error : Mất kết nối /\nQuá tải điện
-Completed --> [*]
-Cancelled --> [*]
-Error --> [*] : Admin xử lý xong
+Cho_Kich_Hoat --> Dang_Sac : [Số dư >= 200.000đ & cổng sạc khả dụng]
+Cho_Kich_Hoat --> Da_Huy : [Khách hàng hủy]
+Dang_Sac --> Da_Hoan_Thanh : [Đạt mục tiêu sạc hoặc bấm Dừng sạc]
+Dang_Sac --> Loi_He_Thong : [Mất kết nối hoặc quá tải điện]
+Da_Hoan_Thanh --> [*]
+Da_Huy --> [*]
+Loi_He_Thong --> [*] : [Quản trị viên xử lý xong]
+@enduml
 
+' --- 7 BIỂU ĐỒ TRẠNG THÁI CHI TIẾT ---
+
+' 1. Quản lý tài khoản
+@startuml Statechart_AccountManagement
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Chon_GD_QL_Tai_Khoan
+Chon_GD_QL_Tai_Khoan : Chọn giao diện quản lý tài khoản
+
+Chon_GD_QL_Tai_Khoan --> Tim_Kiem_Tai_Khoan : Hiển thị danh sách người dùng
+Tim_Kiem_Tai_Khoan : Tìm kiếm tài khoản cần quản lý
+
+Tim_Kiem_Tai_Khoan --> Tim_Kiem_That_Bai : Tài khoản không tồn tại
+Tim_Kiem_That_Bai : Tìm kiếm thất bại
+
+Tim_Kiem_That_Bai --> Chon_GD_QL_Tai_Khoan : Thực hiện lại thao tác
+Tim_Kiem_That_Bai --> [*] : Thoát khỏi quản lý tài khoản
+
+Tim_Kiem_Tai_Khoan --> Chinh_Sua_Vo_Hieu_Hoa : Hiển thị kết quả tìm kiếm
+Chinh_Sua_Vo_Hieu_Hoa : Chỉnh sửa hoặc vô hiệu hóa tài khoản
+
+Chinh_Sua_Vo_Hieu_Hoa --> Xac_Nhan_Thao_Tac : Gửi yêu cầu
+Xac_Nhan_Thao_Tac : Xác nhận thao tác
+
+Xac_Nhan_Thao_Tac --> Vo_Hieu_Hoa : Tài khoản người dùng bị vô hiệu hóa
+Vo_Hieu_Hoa : Tài khoản người dùng bị vô hiệu hóa
+
+Xac_Nhan_Thao_Tac --> Cap_Nhat_Thanh_Cong : Cập nhật thông tin
+Cap_Nhat_Thanh_Cong : Cập nhật thành công
+
+Vo_Hieu_Hoa --> Cap_Nhat_Thanh_Cong : Gửi thông báo đến người dùng
+
+Cap_Nhat_Thanh_Cong --> [*] : Thoát
+@enduml
+
+' 2. Quản lý trạm sạc
+@startuml Statechart_StationManagement
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Chon_GD_QL_Tram
+Chon_GD_QL_Tram : Chọn giao diện quản lý trạm sạc
+
+Chon_GD_QL_Tram --> Xem_Danh_Sach_Tram : Tải danh sách trạm sạc
+Xem_Danh_Sach_Tram : Hiển thị danh sách trạm sạc
+
+Xem_Danh_Sach_Tram --> Yeu_Cau_Thao_Tac : Chọn trạm sạc
+Yeu_Cau_Thao_Tac : Yêu cầu thao tác (Thêm/Sửa/Xóa)
+
+Yeu_Cau_Thao_Tac --> Chon_GD_QL_Tram : [Hủy thao tác]
+
+Yeu_Cau_Thao_Tac --> Xac_Nhan_Xoa : [Yêu cầu Xóa]
+Xac_Nhan_Xoa : Xác nhận xóa trạm sạc
+
+Xac_Nhan_Xoa --> Loi_Xoa_Tram : Có phiên sạc đang hoạt động
+Loi_Xoa_Tram : Lỗi xóa trạm sạc
+
+Loi_Xoa_Tram --> Xem_Danh_Sach_Tram : Quay lại danh sách
+
+Xac_Nhan_Xoa --> Luu_Du_Lieu : [Xác nhận] / Xóa thành công
+Luu_Du_Lieu : Lưu dữ liệu thành công
+
+Yeu_Cau_Thao_Tac --> Cap_Nhat_Thong_Tin : [Yêu cầu Thêm/Sửa]
+Cap_Nhat_Thong_Tin : Cập nhật thông tin trạm sạc
+
+Cap_Nhat_Thong_Tin --> Cap_Nhat_Thong_Tin : Dữ liệu không hợp lệ / Hiển thị lỗi
+Cap_Nhat_Thong_Tin --> Luu_Du_Lieu : Dữ liệu hợp lệ / Lưu database
+
+Luu_Du_Lieu --> [*] : Thoát
+@enduml
+
+' 3. Quản lý bảo trì
+@startuml Statechart_MaintenanceManagement
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Chon_GD_Bao_Tri
+Chon_GD_Bao_Tri : Chọn giao diện quản lý bảo trì
+
+Chon_GD_Bao_Tri --> Xem_Lich_Bao_Tri : Tải dữ liệu lịch bảo trì
+Xem_Lich_Bao_Tri : Hiển thị lịch bảo trì hiện tại
+
+Xem_Lich_Bao_Tri --> Lap_Phieu_Bao_Tri : Chọn tạo phiếu mới
+Lap_Phieu_Bao_Tri : Lập phiếu yêu cầu bảo trì mới
+
+Lap_Phieu_Bao_Tri --> Loi_Dien_Khuyet : Thông tin không hợp lệ
+Loi_Dien_Khuyet : Lỗi thiếu thông tin / Phiếu không hợp lệ
+
+Loi_Dien_Khuyet --> Lap_Phieu_Bao_Tri : Nhập lại thông tin
+
+Lap_Phieu_Bao_Tri --> Luu_Lich_Bao_Tri : Phiếu hợp lệ / Lưu lịch bảo trì
+Luu_Lich_Bao_Tri : Lưu lịch bảo trì thành công
+
+Xem_Lich_Bao_Tri --> Cap_Nhat_Trang_Thai : Chọn phiếu hiện có
+Cap_Nhat_Trang_Thai : Cập nhật trạng thái bảo trì
+
+Cap_Nhat_Trang_Thai --> Luu_Lich_Bao_Tri : [Xác nhận] / Cập nhật database
+
+Luu_Lich_Bao_Tri --> Chuyen_Offline : Áp dụng trạng thái cổng sạc
+Chuyen_Offline : Chuyển trạng thái cổng sạc sang Offline
+
+Chuyen_Offline --> [*] : Thoát khỏi quản lý bảo trì
+@enduml
+
+' 4. Quản lý Giá Cước
+@startuml Statechart_PricingManagement
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Chon_GD_Gia_Cuoc
+Chon_GD_Gia_Cuoc : Chọn quản lý giá cước điện
+
+Chon_GD_Gia_Cuoc --> Xem_Bang_Gia : Tải dữ liệu bảng giá
+Xem_Bang_Gia : Hiển thị bảng giá hiện hành
+
+Xem_Bang_Gia --> Thiet_Lap_Khung_Gio : Chọn cập nhật giá cước
+Thiet_Lap_Khung_Gio : Thiết lập giá cước theo khung giờ mới
+
+Thiet_Lap_Khung_Gio --> Kiem_Tra_Gia_Cuoc : Gửi cấu hình mới
+Kiem_Tra_Gia_Cuoc : Hệ thống xác thực đơn giá mới
+
+Kiem_Tra_Gia_Cuoc --> Loi_Nhap_Lieu : Giá cước < 0 hoặc sai định dạng
+Loi_Nhap_Lieu : Thông báo đơn giá không hợp lệ
+
+Loi_Nhap_Lieu --> Thiet_Lap_Khung_Gio : Nhập lại cấu hình
+
+Kiem_Tra_Gia_Cuoc --> Ap_Dung_Gia_Moi : Dữ liệu hợp lệ / Lưu database
+Ap_Dung_Gia_Moi : Áp dụng bảng giá mới thành công
+
+Ap_Dung_Gia_Moi --> [*] : Thoát
+@enduml
+
+' 5. Khởi động sạc
+@startuml Statechart_StartCharging
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Quet_Ma_QR
+Quet_Ma_QR : Khách hàng quét mã QR tại cổng sạc
+
+Quet_Ma_QR --> Kiem_Tra_Ket_Noi : Tải thông tin trụ sạc
+Kiem_Tra_Ket_Noi : Kiểm tra kết nối vật lý (cáp sạc)
+
+Kiem_Tra_Ket_Noi --> Cho_Cam_Sung_Sac : Súng sạc chưa được cắm
+Cho_Cam_Sung_Sac : Chờ khách cắm súng sạc (Offline)
+
+Cho_Cam_Sung_Sac --> Kiem_Tra_Ket_Noi : Khách cắm súng sạc
+
+Kiem_Tra_Ket_Noi --> Kiem_Tra_So_Du : Súng sạc đã cắm thành công
+Kiem_Tra_So_Du : Kiểm tra số dư ví PayOS
+
+Kiem_Tra_So_Du --> Yeu_Cau_Nap_Tien : Số dư < 200.000đ
+Yeu_Cau_Nap_Tien : Yêu cầu nạp tiền ví qua VietQR
+
+Yeu_Cau_Nap_Tien --> Kiem_Tra_So_Du : Khách hàng nạp tiền thành công
+
+Kiem_Tra_So_Du --> Xac_Nhan_Khoi_Dong : Số dư >= 200.000đ
+Xac_Nhan_Khoi_Dong : Xác nhận bắt đầu sạc trên app
+
+Xac_Nhan_Khoi_Dong --> Kich_Hoat_Trurele : Gửi lệnh bắt đầu
+Kich_Hoat_Trurele : Trụ sạc đóng rơ le, cấp điện
+
+Kich_Hoat_Trurele --> Dang_Sac_Thoi_Gian_Thuc : Rơ le đóng thành công
+Dang_Sac_Thoi_Gian_Thuc : Hiển thị tiến trình sạc thời gian thực
+
+Dang_Sac_Thoi_Gian_Thuc --> [*] : Bắt đầu phiên sạc
+@enduml
+
+' 6. Đặt chỗ trước
+@startuml Statechart_Reservation
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Tim_Tram_Tren_Map
+Tim_Tram_Tren_Map : Mở bản đồ tìm kiếm trạm sạc
+
+Tim_Tram_Tren_Map --> Chon_Cong_Sac : Xem chi tiết trạm sạc
+Chon_Cong_Sac : Chọn cổng sạc muốn đặt chỗ
+
+Chon_Cong_Sac --> Cong_Khong_Kha_Dung : Trạng thái != Available
+Cong_Khong_Kha_Dung : Thông báo cổng sạc không khả dụng
+
+Cong_Khong_Kha_Dung --> Tim_Tram_Tren_Map : Chọn lại cổng khác
+
+Chon_Cong_Sac --> Xac_Nhan_Dat_Cho : Trạng thái == Available
+Xac_Nhan_Dat_Cho : Hiển thị thông tin và xác nhận đặt chỗ
+
+Xac_Nhan_Dat_Cho --> Khoa_Cong_Tam_Thoi : Xác nhận đặt chỗ
+Khoa_Cong_Tam_Thoi : Tạm thời khóa cổng sạc (Status = Reserved)
+
+Khoa_Cong_Tam_Thoi --> Kich_Hoat_Phien_Sac : Quét QR trong vòng 30 phút
+Kich_Hoat_Phien_Sac : Khách đến sạc trong 30 phút / Quét QR
+
+Kich_Hoat_Phien_Sac --> [*] : Chuyển sang phiên sạc
+
+Khoa_Cong_Tam_Thoi --> Tu_Dong_Huy_Dat : Quá thời hạn 30 phút
+Tu_Dong_Huy_Dat : Hủy đặt chỗ (Quá thời hạn 30 phút)
+
+Tu_Dong_Huy_Dat --> Giai_Phong_Cong : Giải phóng tài nguyên
+Giai_Phong_Cong : Mở khóa cổng sạc về Available
+
+Giai_Phong_Cong --> [*] : Hoàn tất hủy
+@enduml
+
+' 7. Thanh toán
+@startuml Statechart_Payment
+skinparam backgroundColor white
+skinparam state {
+  BackgroundColor #E0FFFF
+  BorderColor #008B8B
+  ArrowColor #2F4F4F
+}
+
+[*] --> Kien_Nhan_Thong_Bao
+Kien_Nhan_Thong_Bao : Nhận thông báo kết thúc sạc
+
+Kien_Nhan_Thong_Bao --> Tinh_Toan_Chi_Phi : Kết thúc phiên sạc
+Tinh_Toan_Chi_Phi : Tính tiền sạc và tạo hóa đơn (PaymentInvoice)
+
+Tinh_Toan_Chi_Phi --> Chon_Phuong_Thuc : Hiển thị hóa đơn
+Chon_Phuong_Thuc : Chọn phương thức thanh toán
+
+Chon_Phuong_Thuc --> Kiem_Tra_Vi_PayOS : [Trừ số dư ví PayOS]
+Kiem_Tra_Vi_PayOS : Kiểm tra số dư ví PayOS
+
+Kiem_Tra_Vi_PayOS --> Nap_Tien_VietQR : Số dư ví không đủ
+Nap_Tien_VietQR : Hiển thị VietQR nạp tiền ví
+
+Nap_Tien_VietQR --> Kiem_Tra_Vi_PayOS : Khách nạp tiền ví
+
+Kiem_Tra_Vi_PayOS --> Thanh_Toan_Thanh_Cong : Đủ số dư / Khấu trừ ví
+Thanh_Toan_Thanh_Cong : Giao dịch hoàn tất
+
+Chon_Phuong_Thuc --> Tao_Link_VietQR : [Quét VietQR trực tiếp]
+Tao_Link_VietQR : Tạo cổng thanh toán PayOS VietQR
+
+Tao_Link_VietQR --> Cho_Webhook_PayOS : Hiển thị mã QR PayOS
+Cho_Webhook_PayOS : Chờ webhook xác nhận giao dịch thành công
+
+Cho_Webhook_PayOS --> Tao_Link_VietQR : Webhook báo lỗi hoặc hết hạn
+
+Cho_Webhook_PayOS --> Thanh_Toan_Thanh_Cong : Webhook báo thành công
+
+Thanh_Toan_Thanh_Cong --> Dong_Phien_Sac : Ghi nhận hóa đơn Paid
+Dong_Phien_Sac : Cập nhật trạng thái hóa đơn & phiên sạc
+
+Dong_Phien_Sac --> [*] : Hoàn thành thanh toán
 @enduml
 
 
+
+
 ============================
-4. BIỂU ĐỒ TUẦN TỰ — SẠC XE (Bài 4)
-   Theo Chương 2 slide 63-64
-   - Đối tượng = HCN trên đường vòng đời
-   - Thông điệp: call (mũi tên liền), return (mũi tên đứt)
-   - Đường vòng đời = đường dọc nét đứt
+4. BIỂU ĐỒ TUẦN TỰ (Bài 4)
+   - 7 biểu đồ tuần tự tương tác theo đề cương chi tiết
 ============================
 
-@startuml Sequence_Charging
+' 1. Quản lý tài khoản
+@startuml Sequence_AccountManagement
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Quản trị viên" as Admin
+boundary "ManHinh_DanhSachNguoiDung" as Boundary
+control "QuanLyNguoiDungController" as Control
+entity "ThucThe_NguoiDung" as Entity
+
+Admin -> Boundary: 1: Mở giao diện quản lý tài khoản
+Boundary -> Control: 1.1: layDanhSachNguoiDungActive()
+Control -> Entity: 1.2: timKiemNguoiDungActive()
+Entity --> Control: 1.3: danhSachNguoiDung
+Control --> Boundary: 1.4: hienThiDanhSach(danhSachNguoiDung)
+Boundary --> Admin: 1.5: Hiển thị danh sách tài khoản
+
+Admin -> Boundary: 2: Chỉnh sửa tài khoản (maNguoiDung, thongTinMoi)
+Boundary -> Control: 2.1: capNhatThongTinNguoiDung(maNguoiDung, thongTinMoi)
+Control -> Entity: 2.2: timKiemVaCapNhat(maNguoiDung, thongTinMoi)
+Entity --> Control: 2.3: capNhatThanhCong
+Control --> Boundary: 2.4: hienThiThongBao("Cập nhật thành công")
+Boundary --> Admin: 2.5: Hiển thị thông báo thành công
+@enduml
+
+' 2. Quản lý trạm sạc
+@startuml Sequence_StationManagement
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Quản trị viên" as Admin
+boundary "ManHinh_DanhSachTramSac" as Boundary
+control "QuanLyTramSacController" as Control
+entity "ThucThe_TramSac" as Station
+entity "ThucThe_TruSac" as Charger
+
+Admin -> Boundary: 1: Mở giao diện quản lý trạm sạc
+Boundary -> Control: 1.1: layDanhSachTramVaTru()
+Control -> Station: 1.2: timKiemTatCaTram()
+Station --> Control: 1.3: danhSachTram
+Control -> Charger: 1.4: timKiemTruTheoTram()
+Charger --> Control: 1.5: danhSachTru
+Control --> Boundary: 1.6: hienThiDanhSachTramVaTru(danhSachTram, danhSachTru)
+Boundary --> Admin: 1.7: Hiển thị danh sách trạm & trụ sạc
+
+Admin -> Boundary: 2: Thêm trạm sạc mới (thongTinTram)
+Boundary -> Control: 2.1: taoTramSacMoi(thongTinTram)
+Control -> Station: 2.2: luuTramSacMoi(thongTinTram)
+Station --> Control: 2.3: luuThanhCong
+Control --> Boundary: 2.4: hienThiThongBao("Thêm trạm thành công")
+Boundary --> Admin: 2.5: Cập nhật hiển thị trạm mới
+@enduml
+
+' 3. Quản lý bảo trì
+@startuml Sequence_MaintenanceManagement
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Quản trị viên" as Admin
+boundary "ManHinh_LichBaoTri" as Boundary
+control "QuanLyBaoTriController" as Control
+entity "ThucThe_LichBaoTri" as Maintenance
+entity "ThucThe_TruSac" as Charger
+
+Admin -> Boundary: 1: Mở lịch bảo trì trạm sạc
+Boundary -> Control: 1.1: layDanhSachPhieuBaoTri()
+Control -> Maintenance: 1.2: timKiemPhieuBaoTri()
+Maintenance --> Control: 1.3: danhSachPhieu
+Control --> Boundary: 1.4: hienThiLichBaoTri(danhSachPhieu)
+Boundary --> Admin: 1.5: Hiển thị danh sách phiếu bảo trì
+
+Admin -> Boundary: 2: Lên lịch bảo trì (maTram, maTru, ngayBaoTri)
+Boundary -> Control: 2.1: taoPhieuBaoTriMoi(maTram, maTru, ngayBaoTri)
+Control -> Maintenance: 2.2: luuPhieuBaoTri(maTram, maTru, ngayBaoTri, trangThai="ChoBaoTri")
+Maintenance --> Control: 2.3: thongTinPhieu
+Control -> Charger: 2.4: capNhatTrangThaiTru(maTru, trangThai="NgoaiTuyen")
+Charger --> Control: 2.5: capNhatThanhCong
+Control --> Boundary: 2.6: hienThiThongBao("Lên lịch bảo trì thành công")
+Boundary --> Admin: 2.7: Cập nhật giao diện bảo trì
+@enduml
+
+' 4. Quản lý Giá Cước
+@startuml Sequence_PricingManagement
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Quản trị viên" as Admin
+boundary "ManHinh_CauHinhGiaCuoc" as Boundary
+control "QuanLyGiaCuocController" as Control
+entity "ThucThe_TramSac" as Station
+
+Admin -> Boundary: 1: Xem cấu hình bảng giá điện hiện tại
+Boundary -> Control: 1.1: layGiaCuocHienTai()
+Control -> Station: 1.2: timKiemDonGiaTram()
+Station --> Control: 1.3: bangGiaCuoc
+Control --> Boundary: 1.4: hienThiBangGiaCuoc(bangGiaCuoc)
+Boundary --> Admin: 1.5: Hiển thị bảng giá điện theo khung giờ
+
+Admin -> Boundary: 2: Cập nhật giá cước (maTram, donGiaMoi)
+Boundary -> Control: 2.1: thietLapGiaCuocMoi(maTram, donGiaMoi)
+Control -> Station: 2.2: capNhatDonGiaTram(maTram, donGiaMoi)
+Station --> Control: 2.3: capNhatThanhCong
+Control --> Boundary: 2.4: hienThiThongBao("Cấu hình giá thành công")
+Boundary --> Admin: 2.5: Hiển thị bảng giá mới áp dụng
+@enduml
+
+' 5. Khởi động sạc
+@startuml Sequence_StartCharging
 skinparam backgroundColor white
 skinparam sequenceArrowThickness 1
 skinparam sequenceLifeLineBorderColor #333333
 
 actor "Khách hàng" as KH
-participant ":GiaoDienWeb" as UI
-participant ":ChargingController" as CC
-participant ":User" as U
-participant ":Station" as ST
-participant ":ChargingSession" as CS
+boundary "ManHinh_DangSac" as Boundary
+control "DieuKhienSacController" as Control
+entity "ThucThe_KhachHang" as Wallet
+entity "ThucThe_TruSac" as Charger
+entity "ThucThe_PhienSac" as Session
+actor "TruSacPhanCung" as Hardware
 
-KH -> UI : 1: chonTramVaSungSac()
-UI -> CC : 2: startCharging(stationId, connectorIndex)
-CC -> U : 3: findById(userId)
-U --> CC : 4: user
-CC -> CC : 5: kiemTraBalance(balance >= 200000)
-CC -> ST : 6: findById(stationId)
-ST --> CC : 7: station
-CC -> CC : 8: kiemTraConnector(status == available)
-CC -> CS : 9: create(user, station, pricePerKwh)
-CS --> CC : 10: session (status = charging)
-CC -> ST : 11: connectors[i].status = in_use
-CC -> ST : 12: save()
-CC --> UI : 13: {success: true, sessionId}
-UI --> KH : 14: hienThiManHinhTheoDoiSac()
+KH -> Boundary: 1: Mở app & Quét mã QR tại trụ sạc
+Boundary -> Control: 1.1: kiemTraTrangThaiTru(maTru)
+Control -> Charger: 1.2: timKiemTruTheoMa(maTru)
+Charger --> Control: 1.3: thongTinTru (trangThai="SanSang")
+Control -> Wallet: 1.4: kiemTraSoDuVi(maKhachHang)
+Wallet --> Control: 1.5: soDuVi (>= 200.000đ)
+Control --> Boundary: 1.6: hienThiXacNhanBatDau(thongTinTru)
+Boundary --> KH: 1.7: Hiển thị nút "Bắt đầu sạc"
 
-loop Polling moi 2 giay
-  UI -> CC : 15: getChargingStatus(sessionId)
-  CC -> CS : 16: findById(sessionId)
-  CC -> CC : 17: tinhToan(energyDelivered, currentPower, batteryEnd)
-  CC -> CS : 18: save()
-  CC --> UI : 19: {kWh, kW, %, cost}
-  UI --> KH : 20: capNhatProgressBar()
-end
+KH -> Boundary: 2: Bấm nút "Xác nhận sạc"
+Boundary -> Control: 2.1: batDauPhienSac(maKhachHang, maTru)
+Control -> Session: 2.2: taoPhienSacMoi(maKhachHang, maTru, thoiGianBatDau=now, trangThai="DangSac")
+Session --> Control: 2.3: thongTinPhienSac
+Control -> Charger: 2.4: capNhatTrangThaiTru(maTru, trangThai="DangSac")
+Charger --> Control: 2.5: capNhatThanhCong
+Control -> Hardware: 2.6: kichHoatDongReLeCapDien()
+Hardware --> Control: 2.7: reLeDaDong
+Control --> Boundary: 2.8: hienThiTienTrinhSac(thongTinPhienSac)
+Boundary --> KH: 2.9: Hiển thị tiến trình sạc (kW, kWh, %) thời gian thực
+@enduml
 
-KH -> UI : 21: bamDungSac()
-UI -> CC : 22: stopCharging(sessionId)
-CC -> CS : 23: status = completed, endTime = now
-CC -> CS : 24: totalCost = energyDelivered * pricePerKwh
-CC -> U : 25: balance -= totalCost
-CC -> U : 26: save()
-CC -> ST : 27: connectors[i].status = available
-CC -> ST : 28: totalRevenue += totalCost
-CC -> ST : 29: save()
-CC --> UI : 30: {success: true, hoaDon}
-UI --> KH : 31: hienThiHoaDonHoanTat()
+' 6. Đặt chỗ trước
+@startuml Sequence_Reservation
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
 
+actor "Khách hàng" as KH
+boundary "ManHinh_DatChoTruoc" as Boundary
+control "QuanLyDatChoController" as Control
+entity "ThucThe_TruSac" as Charger
+entity "ThucThe_DatCho" as Reservation
+
+KH -> Boundary: 1: Tìm trạm sạc & Chọn cổng sạc
+Boundary -> Control: 1.1: kiemTraTrangThaiCong(maTru)
+Control -> Charger: 1.2: timKiemTruTheoMa(maTru)
+Charger --> Control: 1.3: thongTinTru (trangThai="SanSang")
+Control --> Boundary: 1.4: hienThiGiaoDienDatCho(thongTinTru)
+Boundary --> KH: 1.5: Hiển thị thông tin đặt chỗ
+
+KH -> Boundary: 2: Chọn khung giờ & Bấm "Đặt chỗ"
+Boundary -> Control: 2.1: datChoTruoc(maKhachHang, maTru, thoiGianDat)
+Control -> Reservation: 2.2: taoPhieuDatCho(maKhachHang, maTru, thoiGianDat, trangThai="KichHoat")
+Reservation --> Control: 2.3: thongTinDatCho
+Control -> Charger: 2.4: capNhatTrangThaiTru(maTru, trangThai="DaDatCho")
+Charger --> Control: 2.5: capNhatThanhCong
+Control --> Boundary: 2.6: hienThiThongBao("Đặt chỗ thành công")
+Boundary --> KH: 2.7: Màn hình giữ chỗ (30 phút)
+@enduml
+
+' 7. Thanh toán
+@startuml Sequence_Payment
+skinparam backgroundColor white
+skinparam sequenceArrowThickness 1
+skinparam sequenceLifeLineBorderColor #333333
+
+actor "Khách hàng" as KH
+boundary "ManHinh_ThanhToan" as Boundary
+control "ThanhToanController" as Control
+entity "ThucThe_PhienSac" as Session
+entity "ThucThe_HoaDon" as Invoice
+entity "ThucThe_KhachHang" as Wallet
+actor "CongThanhToan_PayOS" as PayOS
+
+KH -> Boundary: 1: Chọn phiên sạc kết thúc & Bấm "Thanh toán"
+Boundary -> Control: 1.1: taoHoaDonThanhToan(maPhienSac)
+Control -> Session: 1.2: layLuongDienTieuThu(maPhienSac)
+Session --> Control: 1.3: duLieuTieuThu
+Control -> Control: 1.4: tinhTongTienSac(duLieuTieuThu)
+Control -> Invoice: 1.5: taoHoaDonMoi(maPhienSac, tongTien, trangThai="ChoThanhToan")
+Invoice --> Control: 1.6: thongTinHoaDon
+Control --> Boundary: 1.7: hienThiChiTietHoaDon(thongTinHoaDon)
+Boundary --> KH: 1.8: Hiển thị số tiền và các phương thức thanh toán
+
+KH -> Boundary: 2: Chọn phương thức "Cổng PayOS VietQR"
+Boundary -> Control: 2.1: yeuCauLienKetPayOS(maHoaDon)
+Control -> PayOS: 2.2: taoLienKetThanhToanVietQR(maHoaDon, tongTien)
+PayOS --> Control: 2.3: duongDanThanhToan & maQRVietQR
+Control --> Boundary: 2.4: hienThiMaQRVietQR(maQRVietQR)
+Boundary --> KH: 2.5: Hiển thị mã QR để quét thanh toán
+
+KH -> PayOS: 3: Quét mã QR & chuyển khoản qua ngân hàng
+PayOS -> Control: 3.1: guiWebhookXacNhan(maGiaoDich, trangThai="DA_THANH_TOAN")
+Control -> Control: 3.2: xacThucChuKyBaoMatHMAC()
+Control -> Invoice: 3.3: capNhatTrangThaiHoaDon(maHoaDon, trangThai="DaThanhToan")
+Invoice --> Control: 3.4: capNhatThanhCong
+Control -> Session: 3.5: capNhatTrangThaiPhienSac(maPhienSac, trangThai="DaHoanThanh")
+Session --> Control: 3.6: capNhatThanhCong
+Control --> Boundary: 3.7: hienThiBienLai(thongTinHoaDon)
+Boundary --> KH: 3.8: Hiển thị biên lai điện tử & mở khóa đầu súng sạc
 @enduml
 
 
 ============================
-5. BIỂU ĐỒ TUẦN TỰ — NẠP TIỀN (Bài 4)
+5. BIỂU ĐỒ LỚP HOÀN CHỈNH (Bài 4)
+   - Tông màu vàng, đầy đủ thuộc tính & phương thức nghiệp vụ
 ============================
 
-@startuml Sequence_Payment
+@startuml Class_Diagram_Complete
 skinparam backgroundColor white
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FFE4B5
+  BorderColor #B8860B
+  ArrowColor #B8860B
+}
 
-actor "Khách hàng" as KH
-participant ":GiaoDienVi" as UI
-participant ":PaymentController" as PC
-participant ":Payment" as PM
-participant ":PayOS" as POS
-participant ":User" as U
+class User {
+  + userID: String
+  + name: String
+  + phoneNumber: String
+  + email: String
+  + password: String
+  + status: String
+  --
+  + login()
+  + register()
+  + updateInformation()
+}
 
-KH -> UI : 1: nhapSoTienNap(100000)
-UI -> PC : 2: createTopup(amount)
-PC -> PM : 3: create(type=topup, status=pending,\norderCode=Date.now())
-PM --> PC : 4: payment
-PC -> POS : 5: createPaymentLink(orderCode,\namount, returnUrl, cancelUrl)
-POS --> PC : 6: {checkoutUrl, qrCode}
-PC --> UI : 7: {qrCode, orderCode}
-UI --> KH : 8: hienThiMaQR_VietQR()
+class Administrator {
+  + managementPermissions: List
+  --
+  + manageCustomers()
+  + manageStations()
+  + manageMaintenance()
+  + manageFareRates()
+}
 
-KH -> KH : 9: moAppNganHang_QuetQR_ChuyenKhoan()
+class Customer {
+  + customerID: String
+  + vehicleInfo: String
+  + address: String
+  + paymentMethods: List
+  + rewardPoints: Integer
+  --
+  + viewChargingHistory()
+  + rateStation()
+}
 
-POS -> PC : 10: POST /webhook/payos\n{orderCode, status=PAID, checksum}
-PC -> PC : 11: verifyWebhook()\nXác minh HMAC checksum
-PC -> PM : 12: status = completed
-PC -> U : 13: balance += amount
-PC -> U : 14: save()
-PC --> POS : 15: {success: true}
+class ChargingStation {
+  + stationID: String
+  + stationName: String
+  + location: String
+  + totalChargers: Integer
+  + status: String
+  --
+  + updateStationStatus()
+  + getChargingSlots()
+}
 
-loop Polling moi 3 giay
-  UI -> PC : 16: checkTopupStatus(orderCode)
-  PC -> PM : 17: findOne({payosOrderCode})
-  PC --> UI : 18: {status: completed}
-end
+class Charger {
+  + chargerID: String
+  + stationID: String
+  + chargerType: String
+  + powerOutput: Float
+  + status: String
+  --
+  + checkConnection()
+  + startPowerSupply()
+  + stopPowerSupply()
+  + transmitData()
+}
 
-UI --> KH : 19: thongBaoNapTienThanhCong()\ncapNhatSoDuVi()
+class ChargingSession {
+  + sessionID: String
+  + customerID: String
+  + chargerID: String
+  + status: String
+  + startTime: DateTime
+  + endTime: DateTime
+  + energyConsumed: Float
+  + totalPrice: Float
+  --
+  + startSession()
+  + stopSession()
+  + makePayment()
+}
 
+class PaymentInvoice {
+  + invoiceID: String
+  + sessionID: String
+  + amount: Float
+  + paymentMethod: String
+  + timestamp: DateTime
+  + status: String
+  --
+  + processPayment()
+  + generateReceipt()
+}
+
+User <|-- Customer : Extends
+User <|-- Administrator : Extends
+
+Customer "1" -- "1..*" ChargingSession
+ChargingSession "1" -- "1" PaymentInvoice
+ChargingStation "1" *-- "1..*" Charger
+Charger "1" -- "1..*" ChargingSession
 @enduml
 
 
@@ -404,7 +933,7 @@ UI --> KH : 19: thongBaoNapTienThanhCong()\ncapNhatSoDuVi()
 @startuml Collaboration_Login
 skinparam backgroundColor white
 
-actor ":KhachHang" as KH
+object ":KhachHang" as KH
 
 object ":GiaoDienDangNhap" as UI
 object ":AuthController" as AC
@@ -430,253 +959,284 @@ UI --> KH : 8: hienThiTrangChu()
    - Khóa chính (PK), Khóa ngoại (FK)
 ============================
 
-@startuml ERD_Diagram
-skinparam backgroundColor white
+@startuml ERD_HeThong_English
 skinparam linetype ortho
+skinparam EntityBackgroundColor #F8F9FA
+skinparam EntityBorderColor #343A40
+skinparam EntityHeaderBackgroundColor #E9ECEF
+skinparam ArrowColor #495057
 
-entity "USERS" as users {
-  * _id : ObjectId <<PK>>
+entity "Customer" as cust {
+  * customerID : VARCHAR [PK]
   --
-  fullName : String
-  email : String <<Unique>>
-  phone : String
-  password : String
-  role : String {customer, admin}
-  balance : Number
-  isActive : Boolean
-  otp : String
-  otpExpires : Date
-  lastLogin : Date
-  createdAt : Date
+  name : VARCHAR
+  gender : VARCHAR
+  phoneNumber : VARCHAR
+  email : VARCHAR
+  password : VARCHAR
+  address : VARCHAR
+  paymentMethods : VARCHAR
+  balance : DECIMAL
 }
 
-entity "STATIONS" as stations {
-  * _id : ObjectId <<PK>>
+entity "Administrator" as admin {
+  * adminID : VARCHAR [PK]
   --
-  name : String
-  address : String
-  location : GeoJSON
-  connectors[] : Embedded
-  status : String
-  pricePerKwh : Number
-  rating : Number
-  totalSessions : Number
-  totalRevenue : Number
+  username : VARCHAR
+  password : VARCHAR
+  managementPermissions : VARCHAR
 }
 
-entity "VEHICLES" as vehicles {
-  * _id : ObjectId <<PK>>
+entity "ElectricVehicle" as ev {
+  * vehicleId : VARCHAR [PK]
   --
-  * user_id : ObjectId <<FK>>
-  name : String
-  manufacturer : String
-  licensePlate : String
-  batteryCapacity : Number
-  connectorType : String
+  * customerId : VARCHAR [FK]
+  licensePlate : VARCHAR
+  vehicleModel : VARCHAR
+  batteryCapacity : FLOAT
 }
 
-entity "CHARGING_SESSIONS" as sessions {
-  * _id : ObjectId <<PK>>
+entity "ChargingStation" as station {
+  * stationId : VARCHAR [PK]
   --
-  * user_id : ObjectId <<FK>>
-  * station_id : ObjectId <<FK>>
-  connectorIndex : Number
-  status : String
-  startTime : Date
-  endTime : Date
-  energyDelivered : Number
-  pricePerKwh : Number
-  totalCost : Number
-  paymentStatus : String
+  name : VARCHAR
+  address : VARCHAR
+  locationCoordinates : VARCHAR
+  totalChargers : INT
+  operationStatus : VARCHAR
 }
 
-entity "PAYMENTS" as payments {
-  * _id : ObjectId <<PK>>
+entity "Charger" as charger {
+  * chargerId : VARCHAR [PK]
   --
-  * user_id : ObjectId <<FK>>
-  session_id : ObjectId <<FK>>
-  type : String
-  amount : Number
-  method : String
-  status : String
-  payosOrderCode : Number
-  transactionDate : Date
+  * stationId : VARCHAR [FK]
+  chargerType : VARCHAR
+  maxPower : FLOAT
+  status : VARCHAR
 }
 
-entity "RESERVATIONS" as reservations {
-  * _id : ObjectId <<PK>>
+entity "Reservation" as res {
+  * reservationId : VARCHAR [PK]
   --
-  * user_id : ObjectId <<FK>>
-  * station_id : ObjectId <<FK>>
-  connectorIndex : Number
-  scheduledTime : Date
-  duration : Number
-  status : String
+  * customerId : VARCHAR [FK]
+  * chargerId : VARCHAR [FK]
+  reservedStartTime : DATETIME
+  reservedEndTime : DATETIME
+  status : VARCHAR
 }
 
-entity "PRICERATES" as pricerates {
-  * _id : ObjectId <<PK>>
+entity "ChargingSession" as session {
+  * sessionId : VARCHAR [PK]
   --
-  name : String
-  type : String
-  pricePerKwh : Number
-  startHour : Number
-  endHour : Number
-  isActive : Boolean
+  * customerId : VARCHAR [FK]
+  * vehicleId : VARCHAR [FK]
+  * chargerId : VARCHAR [FK]
+  startTime : DATETIME
+  endTime : DATETIME
+  energyConsumed : FLOAT
+  totalPrice : DECIMAL
+  status : VARCHAR
 }
 
-entity "MAINTENANCES" as maintenances {
-  * _id : ObjectId <<PK>>
+entity "PaymentInvoice" as invoice {
+  * invoiceId : VARCHAR [PK]
   --
-  * station_id : ObjectId <<FK>>
-  connectorIndex : Number
-  type : String
-  description : String
-  status : String
-  cost : Number
+  * sessionId : VARCHAR [FK]
+  amount : DECIMAL
+  paymentMethod : VARCHAR
+  transactionCode : VARCHAR
+  timestamp : DATETIME
+  status : VARCHAR
 }
 
-' === Quan hệ 1-N ===
-users ||--o{ vehicles : "1-N\nSỞ HỮU"
-users ||--o{ sessions : "1-N\nTHỰC HIỆN"
-users ||--o{ payments : "1-N\nTẠO"
-users ||--o{ reservations : "1-N\nĐẶT CHỖ"
-stations ||--o{ sessions : "1-N\nCUNG CẤP"
-stations ||--o{ reservations : "1-N\nNHẬN"
-stations ||--o{ maintenances : "1-N\nBẢO TRÌ"
+entity "StationReview" as review {
+  * reviewId : VARCHAR [PK]
+  --
+  * customerId : VARCHAR [FK]
+  * stationId : VARCHAR [FK]
+  rating : INT
+  comment : TEXT
+  timestamp : DATETIME
+}
 
+entity "StationMaintenance" as maint {
+  * maintenanceId : VARCHAR [PK]
+  --
+  * stationId : VARCHAR [FK]
+  * chargerId : VARCHAR [FK]
+  maintenanceDate : DATETIME
+  status : VARCHAR
+}
+
+entity "StationIncident" as incident {
+  * incidentId : VARCHAR [PK]
+  --
+  * stationId : VARCHAR [FK]
+  * chargerId : VARCHAR [FK]
+  description : TEXT
+  timestamp : DATETIME
+  status : VARCHAR
+}
+
+cust ||--o{ ev : "owns"
+cust ||--o{ res : "makes"
+cust ||--o{ session : "starts"
+cust ||--o{ review : "writes"
+station ||--o{ charger : "contains"
+station ||--o{ review : "receives"
+station ||--o{ maint : "needs"
+station ||--o{ incident : "has"
+charger ||--o{ res : "reserved"
+charger ||--o{ session : "hosts"
+ev ||--o{ session : "charged"
+session ||--o| invoice : "generates"
 @enduml
+
 
 
 ============================
 8. BIỂU ĐỒ THÀNH PHẦN (Bài 6)
    Theo Chương 2 slide 66-68
-   - Thành phần = HCN có icon component
-   - Giao diện = hình tròn nhỏ
+   - Thành phần = HCN có hai hình nhỏ nhô bên trái
    - Phụ thuộc = mũi tên nét đứt
 ============================
 
-@startuml Component_Diagram
+@startuml Component_Diagram_EV
 skinparam backgroundColor white
+skinparam linetype ortho
+skinparam package {
+  BackgroundColor #F8F9FA
+  BorderColor #343A40
+}
 skinparam component {
-  BackgroundColor #FEFEFE
-  BorderColor #333333
+  BackgroundColor #FFFFFF
+  BorderColor #495057
 }
 
-package "Tầng Giao Diện\n(View Layer)" #E8F5E9 {
-  [Client Browser] as Browser
-  [EJS Template Engine] as EJS
-  [Leaflet.js Map] as Leaflet
-  [Chart.js Analytics] as Chart
-  [Static Assets\n(CSS, JS, Images)] as Assets
+package "Passenger Mobile Device" as mobilePkg {
+  component "map_view.js" <<document>>
+  component "reservation_client.js" <<document>>
+  component "charging_monitor.js" <<document>>
+  component "payment_client.js" <<document>>
+  component "auth_helper.js" <<document>>
 }
 
-package "Tầng Xử Lý\n(Controller Layer)" #E3F2FD {
-  [Express.js Router] as Router
-  [Auth Controller] as AuthCtrl
-  [Station Controller] as StationCtrl
-  [Charging Controller] as ChargeCtrl
-  [Payment Controller] as PayCtrl
-  [Dashboard Controller] as DashCtrl
-  [Auth Middleware\n(isAuthenticated)] as AuthMW
-  [Role Middleware\n(isAdmin)] as RoleMW
+package "Admin Workstation" as adminPkg {
+  component "dashboard_view.js" <<document>>
+  component "station_manager.js" <<document>>
+  component "incident_handler.js" <<document>>
+  component "pricing_config.js" <<document>>
 }
 
-package "Tầng Dữ Liệu\n(Model Layer)" #FFF3E0 {
-  [User Model] as UserM
-  [Station Model] as StationM
-  [ChargingSession Model] as SessionM
-  [Payment Model] as PaymentM
-  [Nodemailer Service] as Mailer
-  [PayOS SDK Service] as PayOS
+package "Cloud Backend" as backendPkg {
+  component "api_gateway.js" <<executable>>
+  component "auth_service.js" <<executable>>
+  component "reservation_service.js" <<executable>>
+  component "session_manager.js" <<executable>>
+  component "payment_handler.js" <<executable>>
+  component "mqtt_dispatcher.js" <<executable>>
 }
 
-database "MongoDB Atlas" as DB
+package "Database Connector" as dbConnectorPkg {
+  component "db_pool_connector.js" <<library>>
+  component "user_model.js" <<library>>
+  component "station_model.js" <<library>>
+  component "session_model.js" <<library>>
+}
 
-' === Luồng phụ thuộc ===
-Browser ..> Router
-Router ..> AuthMW
-AuthMW ..> RoleMW
-Router ..> AuthCtrl
-Router ..> StationCtrl
-Router ..> ChargeCtrl
-Router ..> PayCtrl
-Router ..> DashCtrl
-AuthCtrl ..> UserM
-AuthCtrl ..> Mailer
-StationCtrl ..> StationM
-ChargeCtrl ..> SessionM
-ChargeCtrl ..> UserM
-ChargeCtrl ..> StationM
-PayCtrl ..> PaymentM
-PayCtrl ..> PayOS
-DashCtrl ..> SessionM
-UserM ..> DB
-StationM ..> DB
-SessionM ..> DB
-PaymentM ..> DB
+package "Cloud Database Server" as dbServerPkg {
+  component "users_table.sql" <<database>>
+  component "stations_table.sql" <<database>>
+  component "sessions_table.sql" <<database>>
+  component "payments_table.sql" <<database>>
+}
 
+package "IoT Smart Charger Firmware" as iotPkg {
+  component "wifi_manager.cpp" <<executable>>
+  component "mqtt_client.cpp" <<executable>>
+  component "relay_controller.cpp" <<executable>>
+  component "energy_sensor.cpp" <<executable>>
+}
+
+package "External Payment Gateway" as payosPkg {
+  component "payos_sdk.js" <<library>>
+}
+
+mobilePkg ..> backendPkg : "HTTP / HTTPS"
+adminPkg ..> backendPkg : "HTTP / HTTPS"
+backendPkg ..> payosPkg : "API Calls"
+backendPkg ..> dbConnectorPkg : "gọi hàm"
+dbConnectorPkg ..> dbServerPkg : "truy vấn SQL"
+backendPkg ..> iotPkg : "lệnh MQTT"
 @enduml
 
 
 ============================
 9. BIỂU ĐỒ TRIỂN KHAI (Bài 6)
    Theo Chương 2 slide 69
-   Theo Chương 5 slide 122-123
    - Nút = hình hộp 3D
    - Liên kết = đường nối có giao thức
    - Thành phần = artifact bên trong nút
 ============================
 
-@startuml Deployment_Diagram
+@startuml Deployment_Diagram_EV
 skinparam backgroundColor white
+skinparam linetype ortho
 skinparam node {
-  BackgroundColor #FEFEFE
-  BorderColor #333333
+  BackgroundColor #F8F9FA
+  BorderColor #343A40
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #495057
 }
 
-node "Thiết bị Khách hàng" as client {
-  artifact "Chrome / Safari\nBrowser" as browser
-  artifact "GPS Module" as gps
+node "User Mobile" <<Device>> as mobile {
+  component "map_view.js" <<document>>
+  component "reservation_client.js" <<document>>
+  component "charging_monitor.js" <<document>>
+  component "payment_client.js" <<document>>
+  component "auth_helper.js" <<document>>
 }
 
-node "Cloudflare CDN" as cdn {
-  artifact "WAF Firewall" as waf
-  artifact "SSL/TLS\nCertificate" as ssl
+node "Admin PC" <<Device>> as pc {
+  component "dashboard_view.js" <<document>>
+  component "station_manager.js" <<document>>
+  component "incident_handler.js" <<document>>
+  component "pricing_config.js" <<document>>
 }
 
-node "Cloud VPS\n(Ubuntu Linux)" as server {
-  artifact "Node.js v22+" as nodejs
-  artifact "PM2 Process\nManager" as pm2
-  artifact "Express.js App" as app {
+node "Cloud VPS" <<Processor>> as server {
+  component "api_gateway.js" <<executable>>
+  component "auth_service.js" <<executable>>
+  component "reservation_service.js" <<executable>>
+  component "session_manager.js" <<executable>>
+  component "payment_handler.js" <<executable>>
+  component "mqtt_dispatcher.js" <<executable>>
+  component "payos_sdk.js" <<library>>
+  component "db_pool_connector.js" <<library>>
+}
+
+node "Database Server" <<Processor>> as dbServer {
+  component "users_table.sql" <<database>>
+  component "stations_table.sql" <<database>>
+  component "sessions_table.sql" <<database>>
+  component "payments_table.sql" <<database>>
+}
+
+node "Charging Station" <<Device>> as station {
+  node "Microcontroller" <<Processor>> as mcu {
+    component "wifi_manager.cpp" <<executable>>
+    component "mqtt_client.cpp" <<executable>>
+    component "relay_controller.cpp" <<executable>>
+    component "energy_sensor.cpp" <<executable>>
   }
 }
 
-node "MongoDB Atlas\n(Replica Set)" as atlas {
-  node "Primary\n(Singapore)" as primary {
-    database "MongoDB" as db1
-  }
-  node "Secondary\n(Hong Kong)" as secondary {
-    database "MongoDB" as db2
-  }
-}
-
-node "PayOS Gateway" as payos {
-  artifact "VietQR API" as qr
-  artifact "Webhook Service" as wh
-}
-
-node "Google SMTP" as smtp {
-  artifact "Gmail Server\n(Port 465 SSL)" as gmail
-}
-
-' === Liên kết truyền thông ===
-client -- cdn : <<HTTPS\nport 443>>
-cdn -- server : <<Proxy\nport 3000>>
-server -- atlas : <<TCP\nport 27017>>
-server -- payos : <<HTTPS\nRESTful API>>
-server -- smtp : <<SMTP\nport 465>>
-payos -- server : <<Webhook\nHTTP POST>>
-primary -- secondary : <<Replication>>
-
+mobile -- server : "HTTPS (Port 443)"
+pc -- server : "HTTPS (Port 443)"
+server -- dbServer : "TCP/IP (Port 3306)"
+server -- mcu : "MQTT (Port 1883)"
 @enduml
+
+
