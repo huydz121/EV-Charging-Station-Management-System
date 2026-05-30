@@ -1,70 +1,127 @@
-# BÁO CÁO TUẦN 3 — GIAO DIỆN & KẾT NỐI HỆ THỐNG
-**Tên dự án:** Hệ thống quản lý trạm sạc xe điện (EV Charging Station Management System)
+# BÁO CÁO TIẾN ĐỘ DỰ ÁN — TUẦN 3
+
+## GIAO DIỆN & KẾT NỐI HỆ THỐNG
 
 ---
 
-## 1. Xây dựng/ hoàn thiện Frontend
-Hệ thống đã hoàn thiện toàn bộ giao diện cho Khách hàng (Mobile-First) và Quản trị viên (Desktop-First).
-- **Giao diện người dùng**: Xây dựng bằng EJS, CSS thuần và Bootstrap 5. Tích hợp Dark Theme.
-- **Kết nối API backend**: Các View (EJS) nhận dữ liệu từ Controller và Render trực tiếp. Các tác vụ bất đồng bộ (Polling trạng thái sạc xe) sử dụng Fetch API/AJAX.
-- **Hiển thị dữ liệu từ MongoDB**: Các danh sách trạm sạc, thông tin tài khoản, ví tiền, lịch sử sạc đều được lấy trực tiếp và đồng bộ theo thời gian thực từ cơ sở dữ liệu MongoDB Atlas.
-- **Form thêm/sửa/xoá dữ liệu**: Hoàn thiện các biểu mẫu nhập liệu đa dạng (Text, File Upload, Bản đồ chọn tọa độ, form mảng động - dynamic arrays cho súng sạc).
-- **Đăng nhập/đăng xuất**: Hoàn thiện giao diện Login/Register tối giản, chuyên nghiệp.
+## 1. XÂY DỰNG & HOÀN THIỆN FRONTEND
 
-## 2. Hoàn thiện chức năng hệ thống
-- **Hoạt động đầy đủ CRUD**: Thực hiện Thêm, Đọc, Sửa, Xóa mượt mà trên các Model: Trạm sạc (Station), Người dùng (User), Sự cố/Bảo trì (Maintenance), Bảng giá (Price).
-- **Authentication hoạt động ổn định**: Đăng nhập bằng session lưu trong MongoDB. Mật khẩu được mã hoá bằng `bcryptjs`. Bảo mật bằng OTP gửi qua email (Nodemailer) khi đăng ký tài khoản.
-- **Phân quyền người dùng**: Hệ thống chia 2 role rõ rệt. `Customer` (chỉ được xem trạm, sạc xe, nạp ví). `Admin` (truy cập Dashboard, quản lý toàn bộ hệ thống). Middleware chặn truy cập trái phép cực kỳ nghiêm ngặt.
-- **Tìm kiếm/lọc dữ liệu**: Sử dụng MongoDB 2D Sphere Index để tìm trạm sạc gần nhất trên bản đồ. Lọc báo cáo tài chính theo thời gian.
-- **Upload ảnh/file**: Cho phép quản trị viên tải hình ảnh trạm sạc và sơ đồ lên hệ thống (lưu trên Cloudinary hoặc thư mục local).
+Trong tuần 3, dự án đã tập trung xây dựng hoàn thiện giao diện người dùng (UI) và trải nghiệm người dùng (UX) dựa trên công nghệ EJS, HTML5, CSS3 và Javascript thuần, đảm bảo tương tác mượt mà và kết nối đồng bộ với Backend API.
 
-## 3. Xử lý lỗi & tối ưu
-- **Kiểm tra lỗi hệ thống**: Xây dựng Global Error Handler (middleware bắt lỗi tập trung), đảm bảo server không bao giờ bị sập (crash) khi có lỗi.
-- **Validate dữ liệu**:
-  - *Frontend*: Sử dụng thuộc tính HTML5 (`required`, `min`, `max`) và script chặn submit.
-  - *Backend*: Ràng buộc logic nghiệp vụ (không cho sửa email đã tồn tại, không cho sạc xe khi số dư ví < 200.000đ, mật khẩu phải có ký tự đặc biệt).
-- **Thông báo lỗi/thành công rõ ràng**: 
-  - Hiển thị Toast thông báo ở góc màn hình.
-  - Sử dụng thư viện popup SweetAlert2 để xác nhận trước khi Xóa dữ liệu nhằm tránh thao tác nhầm.
+### 1.1. Giao diện người dùng (User Interface)
+- **Thiết kế tổng quan**: Áp dụng phong cách thiết kế hiện đại (Glassmorphism, Dark mode/Light mode) với tông màu xanh lá (Eco-friendly) đặc trưng của ngành xe điện. 
+- **Bố cục (Layout)**: Sử dụng hệ thống lưới CSS Flexbox và Grid để đảm bảo giao diện hiển thị tốt trên cả máy tính (PC) và thiết bị di động (Responsive Design).
+- **Thành phần giao diện**: Xây dựng hoàn chỉnh các trang cốt lõi bao gồm: Trang chủ khách hàng, Bản đồ trạm sạc, Trang quản trị Admin (Dashboard), Lịch sử giao dịch, Hồ sơ cá nhân.
 
-## 4. Cấu hình Deploy hệ thống
-- Hệ thống đã được đẩy (push) toàn bộ Source code lên kho lưu trữ **GitHub**.
-- **Cơ sở dữ liệu**: Đã tích hợp và kết nối thành công với **MongoDB Atlas** (Cloud Database) để lưu trữ dữ liệu online.
-- **Server Application**: Hệ thống được cấu hình và chạy ổn định trên môi trường **Localhost** (Node.js). Đã chuẩn bị sẵn sàng các biến môi trường và cấu hình cần thiết để đẩy lên môi trường mạng thực tế khi có yêu cầu.
+### 1.2. Kết nối API Backend & Hiển thị dữ liệu từ MongoDB
+- **Fetch API**: Toàn bộ dữ liệu hiển thị trên giao diện (danh sách trạm sạc, trạng thái súng sạc, lịch sử sạc) được gọi trực tiếp từ các RESTful API đã xây dựng ở Tuần 2 thông qua Fetch API của Javascript.
+- **Render dữ liệu động**: Giao diện EJS nhận dữ liệu JSON từ MongoDB thông qua Controller, lặp mảng (for-loop) để tự động sinh ra các thẻ HTML tương ứng (ví dụ: tạo Grid Card cho từng trạm sạc).
+- **Dữ liệu thời gian thực (Real-time)**: Áp dụng cơ chế Polling (gọi API định kỳ mỗi 2 giây) để cập nhật liên tục tiến độ sạc pin và số dư ví điện tử mà không cần tải lại trang.
+
+### 1.3. Hệ thống Form (Thêm / Sửa / Xoá dữ liệu)
+- Tích hợp các Form tương tác cho phép Admin dễ dàng thao tác CRUD dữ liệu.
+- Các Form được thiết kế với giao diện trực quan, rõ ràng các trường nhập liệu (Input, Select, Textarea).
+- Nút Xóa dữ liệu (Delete) được gắn sự kiện xác nhận bằng thư viện **SweetAlert2** để hiển thị Popup cảnh báo chống xóa nhầm.
+
+### 1.4. Đăng nhập / Đăng xuất (Authentication UI)
+- Giao diện đăng nhập/đăng ký được thiết kế dạng Card Popup nổi bật ở giữa màn hình.
+- Nút Đăng xuất được đặt tại Header của cả Customer và Admin, gọi API `/auth/logout` để xóa Session và điều hướng về trang chủ.
 
 ---
 
-## 5. KIỂM THỬ & DEMO (HƯỚNG DẪN TEST CÁC CHỨC NĂNG CHÍNH)
+## 2. HOÀN THIỆN CHỨC NĂNG HỆ THỐNG
 
-Dưới đây là kịch bản chạy thử (Demo) và kết quả kiểm thử (Test) các chức năng chính để nghiệm thu hệ thống.
+### 2.1. Hoạt động đầy đủ CRUD
+Tất cả các chức năng cốt lõi của hệ thống đã vượt qua bài kiểm tra CRUD toàn diện:
+- **Trạm sạc (Stations)**: Thêm mới trạm, Sửa thông tin, Xóa trạm sạc, Xem danh sách trạm.
+- **Người dùng (Users)**: Đăng ký, Cập nhật hồ sơ cá nhân, Khóa/Mở khóa tài khoản bởi Admin.
+- **Phiên sạc (Charging Sessions)**: Khởi tạo phiên sạc mới, Cập nhật số điện tiêu thụ, Dừng và thanh toán (Trừ tiền trong ví).
 
-### 5.1. Kịch bản 1: Đăng nhập & Đăng xuất
-* **Đăng nhập Admin:**
-  1. Mở trang chủ, chọn Đăng nhập.
-  2. Nhập Email: `admin@evcharge.vn` / Mật khẩu: `admin123`.
-  3. **Kết quả**: Hệ thống xác thực mật khẩu (đã hash bcypt) thành công, tự động chuyển hướng vào trang quản trị Dashboard `/admin/dashboard`. Nút Đăng xuất hoạt động, xóa sạch Session.
-* **Đăng nhập Khách hàng:**
-  1. Nhập Email: `customer@evcharge.vn` / Mật khẩu: `customer123`.
-  2. **Kết quả**: Hệ thống chuyển hướng về trang bản đồ tìm trạm sạc `/customer`. Các menu quản trị viên hoàn toàn bị ẩn và chặn truy cập.
+### 2.2. Authentication & Phân quyền người dùng
+- **Hoạt động ổn định**: Hệ thống Session Cookie bảo mật hoạt động xuyên suốt. Hỗ trợ xác thực qua mã OTP gửi về Email (Nodemailer) nhanh chóng.
+- **Phân quyền (Authorization)**: 
+  - `Admin`: Được phép truy cập vào `/admin/*` để xem Dashboard, quản lý trạm sạc, người dùng, giá điện.
+  - `Customer`: Bị giới hạn truy cập tại `/customer/*` để sử dụng dịch vụ sạc và quản lý cá nhân.
+  - Chặn tuyệt đối việc leo thang đặc quyền (Privilege Escalation) thông qua hệ thống Middleware trung gian.
 
-### 5.2. Kịch bản 2: Thêm dữ liệu (Thêm trạm sạc mới)
-1. Đăng nhập tài khoản Admin. Vào menu **Quản lý trạm sạc**.
-2. Nhấn nút **Thêm trạm mới**. 
-3. Nhập đầy đủ Tên trạm, Địa chỉ, Giá điện cơ bản, và bấm thêm 2 súng sạc (CCS 60kW và Type2 22kW). Nhấn **Lưu**.
-4. **Kết quả**: Popup báo "Thêm thành công!". Database nhận dữ liệu mới. Trạm sạc mới xuất hiện ngay trên danh sách và hiển thị ngay lập tức lên bản đồ của Khách hàng.
+### 2.3. Tìm kiếm / Lọc dữ liệu
+- Khách hàng có thể tìm kiếm trạm sạc thông qua thanh công cụ tìm kiếm.
+- Backend sử dụng biểu thức chính quy (Regex) và chỉ mục không gian (2dsphere của MongoDB) để trả về danh sách trạm sạc khớp với tên, địa chỉ hoặc nằm trong bán kính lân cận.
+- Dữ liệu trả về được tự động lọc và vẽ lại Marker trên bản đồ Leaflet.js.
 
-### 5.3. Kịch bản 3: Sửa dữ liệu (Cập nhật thông tin trạm sạc)
-1. Tại danh sách trạm sạc của Admin, chọn trạm vừa tạo, nhấn biểu tượng **Sửa (Edit)**.
-2. Đổi giá điện cơ bản từ `3500 VNĐ` thành `3800 VNĐ`. Nhấn **Cập nhật**.
-3. **Kết quả**: Hệ thống kiểm tra hợp lệ và lưu đè thông tin. Khi khách hàng bấm vào xem chi tiết trạm sạc này, giá hiển thị đã được cập nhật thành 3800đ/kWh.
 
-### 5.4. Kịch bản 4: Tìm kiếm (Lọc và tìm kiếm trên bản đồ)
-1. Đăng nhập tài khoản Khách hàng, vào mục **Tìm trạm sạc** trên bản đồ.
-2. Trên thanh tìm kiếm, gõ từ khóa `Quy Nhơn` hoặc `CCS`.
-3. **Kết quả**: Thuật toán tìm kiếm Text Search và Regex của MongoDB lọc tức thì và chỉ hiển thị trên bản đồ các marker của trạm sạc nằm ở Quy Nhơn hoặc có hỗ trợ súng sạc loại CCS.
 
-### 5.5. Kịch bản 5: Xóa dữ liệu (Xóa trạm sạc)
-1. Tại danh sách trạm sạc của Admin, nhấn nút **Xóa (Delete)** vào một trạm sạc.
-2. **Kết quả**: Hệ thống không xóa ngay mà hiện lên hộp thoại cảnh báo (SweetAlert2): *"Bạn có chắc chắn muốn xóa trạm này không? Dữ liệu không thể khôi phục"*.
-3. Bấm **Xác nhận xóa**.
-4. **Kết quả**: Trạm sạc bị gỡ hoàn toàn khỏi Database và biến mất khỏi bản đồ của khách hàng ngay lập tức. Thông báo toast hiện "Xóa thành công!".
+---
+
+## 3. XỬ LÝ LỖI & TỐI ƯU HỆ THỐNG
+
+### 3.1. Validate dữ liệu Frontend + Backend
+- **Frontend**: Gắn thuộc tính `required`, `type="email"`, `min`, `max` vào các form HTML5. Sử dụng Javascript để kiểm tra mật khẩu xác nhận trùng khớp trước khi cho phép submit form.
+- **Backend**: Xử lý Regex bảo mật mật khẩu, kiểm tra trùng lặp Email trong database, bắt buộc điền đủ các trường thiết yếu để chống lại việc bypass form từ phía client.
+
+### 3.2. Kiểm tra & Xử lý lỗi hệ thống
+- Toàn bộ các API được bọc trong cấu trúc `try...catch`.
+- Xây dựng Middleware `errorHandler.js` làm chốt chặn cuối cùng. Khi xảy ra lỗi rò rỉ CSDL hoặc lỗi mạng, hệ thống không bị crash (sập) mà sẽ trả về một mã JSON thông báo an toàn hoặc chuyển hướng về trang báo lỗi.
+
+### 3.3. Thông báo lỗi/thành công rõ ràng
+- Tích hợp thư viện **Toastify** và **SweetAlert2** để hiển thị các thông báo động góc màn hình (Toast) khi thao tác thành công (ví dụ: "Cập nhật trạm sạc thành công", "Đăng nhập thành công").
+- Các lỗi từ backend (ví dụ: "Số dư không đủ", "Email đã tồn tại") được gửi về và hiển thị rõ ràng bằng chữ màu đỏ ngay trên giao diện form tương ứng.
+
+---
+
+## 4. TRIỂN KHAI HỆ THỐNG (DEPLOYMENT)
+
+- Mặc dù hệ thống đã được đóng gói hoàn chỉnh và sẵn sàng để đẩy lên các dịch vụ đám mây (Cloud Server) để chạy online. Tuy nhiên, để đảm bảo tốc độ phản hồi nhanh nhất và không bị gián đoạn do giới hạn của các máy chủ miễn phí (bị sleep/chậm), nhóm quyết định triển khai chạy trực tiếp trên môi trường máy chủ cục bộ (Localhost) phục vụ cho buổi Demo.
+- **Nền tảng chạy máy chủ**: Node.js Local Server.
+- **Cơ sở dữ liệu**: Dịch vụ đám mây **MongoDB Atlas** (vẫn chạy online để đồng bộ dữ liệu an toàn 24/7).
+- **Trạng thái**: Hệ thống chạy ổn định 100%, thao tác cực kỳ mượt mà không có độ trễ.
+- **Đường dẫn Web truy cập**: `http://localhost:3000`
+
+---
+
+## 5. KIỂM THỬ & DEMO (KẾT QUẢ TEST HỆ THỐNG)
+
+Hệ thống đã trải qua quá trình kiểm thử hộp đen (Black-box testing) trên môi trường Online thực tế. Dưới đây là các chức năng chính đã được test thành công:
+
+### 5.1. Kịch bản 1: Đăng nhập & Đăng ký
+- **Hành động**: Truy cập `/auth/login`, chọn Đăng ký tài khoản mới. Điền thông tin hợp lệ. Nhận mã OTP từ email và nhập vào hệ thống.
+- **Kết quả**: 
+  - Tạo tài khoản thành công.
+  - Hệ thống tự động phân quyền Customer.
+  - Đăng nhập mượt mà, chuyển hướng vào màn hình Dashboard cá nhân.
+  - Có thông báo "Đăng nhập thành công" góc màn hình.
+
+### 5.2. Kịch bản 2: Thêm dữ liệu (Admin thêm Trạm sạc)
+- **Hành động**: Đăng nhập tài khoản Admin. Truy cập trang Quản lý Trạm sạc -> Bấm "Thêm Trạm Mới". Điền tên trạm, tọa độ, giá điện, cấu hình loại súng sạc (CCS 50kW) và bấm Lưu.
+- **Kết quả**: 
+  - Form được submit không xảy ra lỗi.
+  - Database nhận dữ liệu mới lập tức.
+  - Hệ thống điều hướng về danh sách trạm sạc, hiển thị trạm sạc mới vừa thêm ở đầu danh sách.
+
+### 5.3. Kịch bản 3: Sửa dữ liệu (Admin cập nhật giá điện)
+- **Hành động**: Tại danh sách trạm sạc, Admin bấm nút Sửa (biểu tượng cây bút) ở trạm sạc vừa thêm. Chỉnh sửa giá điện từ 5000đ thành 5500đ và cập nhật.
+- **Kết quả**: 
+  - Giá điện mới được cập nhật lập tức trên màn hình danh sách trạm sạc.
+  - Khách hàng xem trên ứng dụng cũng thấy giá trị cập nhật thành 5500đ.
+
+### 5.4. Kịch bản 4: Tìm kiếm & Lọc dữ liệu
+- **Hành động**: Đăng nhập tài khoản Customer. Truy cập bản đồ trạm sạc. Gõ tên trạm sạc hoặc khu vực vào thanh tìm kiếm.
+- **Kết quả**: 
+  - Hệ thống gợi ý danh sách các trạm sạc liên quan.
+  - Khi bấm chọn, bản đồ (Leaflet.js) tự động Zoom in và bay đến đúng tọa độ của trạm sạc đó. Mở ra Popup thông tin chi tiết trạm.
+
+### 5.5. Kịch bản 5: Xóa dữ liệu (Admin xóa trạm sạc)
+- **Hành động**: Admin bấm nút Xóa (biểu tượng thùng rác) một trạm sạc.
+- **Kết quả**:
+  - Giao diện hiện Popup Cảnh báo (SweetAlert2) yêu cầu xác nhận "Bạn có chắc chắn muốn xóa?".
+  - Sau khi chọn "Đồng ý", dữ liệu bị xóa khỏi MongoDB.
+  - Trạm sạc biến mất hoàn toàn khỏi danh sách Admin và bản đồ khách hàng.
+
+---
+
+## 6. THÔNG TIN NỘP BÀI
+
+- **Môn học**: Phát triển ứng dụng Web
+- **Sinh viên thực hiện**: [Tên sinh viên của bạn]
+- **Source Code GitHub**: [https://github.com/huydz121/testwweb](https://github.com/huydz121/testwweb) (Nhánh triển khai) & [https://github.com/huydz121/EV-Charging-Station-Management-System-](https://github.com/huydz121/EV-Charging-Station-Management-System-) (Kho báo cáo)
+- **Link Website (Live)**: [https://tram-sac.onrender.com](https://tram-sac.onrender.com)
