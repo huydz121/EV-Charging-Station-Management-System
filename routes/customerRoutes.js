@@ -10,6 +10,7 @@ const chargingController = require('../controllers/customer/chargingController')
 const paymentController = require('../controllers/customer/paymentController');
 const historyController = require('../controllers/customer/historyController');
 const profileController = require('../controllers/customer/profileController');
+const upload = require('../middlewares/upload');
 const Station = require('../models/Station');
 
 // All customer routes require authentication
@@ -72,6 +73,7 @@ router.get('/history/:id', historyController.getSessionDetail);
 // Profile
 router.get('/profile', profileController.getProfile);
 router.put('/profile', profileController.updateProfile);
+router.post('/profile/avatar', upload.single('avatar'), profileController.updateAvatar);
 router.put('/profile/password', profileController.changePassword);
 
 module.exports = router;

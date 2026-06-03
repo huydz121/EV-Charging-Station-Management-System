@@ -98,6 +98,22 @@ exports.checkTopupStatus = async (req, res) => {
           user.balance += payment.amount;
           await user.save();
           req.session.user.balance = user.balance;
+          
+          // Emit socket.io event for realtime notification
+          const io = req.app.get('io');
+          if (io) {
+            io.emit('new_notification', {
+              type: 'payment',
+              message: `Khách hàng ${user.fullName} vừa nạp ${payment.amount.toLocaleString('vi-VN')}đ vào ví!`,
+              time: new Date()
+            });
+            global.adminNotifications.push({
+              message: `Khách hàng ${user.fullName} vừa nạp ${payment.amount.toLocaleString('vi-VN')}đ vào ví!`,
+              type: 'success',
+              time: new Date()
+            });
+          }
+          
           return res.json({ success: true, status: 'completed', balance: user.balance });
         }
       }

@@ -1,4 +1,4 @@
-﻿
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
     <h2 style="font-size: 20px; font-weight: 700;">Quản lý người dùng</h2>
@@ -52,6 +52,9 @@
                 <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="toggleUser('<%= u._id %>')" title="Khóa/Mở">
                   <i class="fas fa-<%= u.isActive ? 'lock' : 'unlock' %>"></i>
                 </button>
+                <button class="btn-ev btn-ev-outline btn-ev-sm" onclick="promoteUser('<%= u._id %>')" title="Thăng/Giáng cấp Admin" style="<%= u.role === 'admin' ? 'color: var(--danger)' : 'color: var(--accent)' %>">
+                  <i class="fas fa-<%= u.role === 'admin' ? 'arrow-down' : 'arrow-up' %>"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -66,5 +69,13 @@ function toggleUser(id) {
   fetch('/admin/users/' + id + '/toggle', { method: 'PUT' })
     .then(r => r.json())
     .then(data => { if (data.success) location.reload(); });
+}
+
+function promoteUser(id) {
+  if (confirm("Bạn có chắc chắn muốn thay đổi quyền Admin của người này không?")) {
+    fetch('/admin/users/' + id + '/promote', { method: 'PUT' })
+      .then(r => r.json())
+      .then(data => { if (data.success) location.reload(); });
+  }
 }
 </script>

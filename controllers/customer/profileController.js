@@ -19,6 +19,18 @@ exports.updateProfile = async (req, res) => {
   } catch (error) { res.json({ success: false, message: error.message }); }
 };
 
+exports.updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) return res.json({ success: false, message: 'Vui lòng chọn ảnh' });
+    const avatarUrl = '/uploads/avatars/' + req.file.filename;
+    await User.findByIdAndUpdate(req.session.user._id, { avatar: avatarUrl });
+    req.session.user.avatar = avatarUrl;
+    res.json({ success: true, avatarUrl });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;

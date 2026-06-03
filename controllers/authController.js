@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const mailer = require('../services/mailer');
 const bcrypt = require('bcryptjs');
+const logger = require('../utils/logger');
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
@@ -14,6 +15,7 @@ exports.postLogin = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || !(await user.comparePassword(password))) {
+      logger.emit('error_login', { email, ip: req.ip, message: 'Sai email hoặc mật khẩu' });
       return res.render('customer/login', {
         layout: false,
         error: 'Email hoặc mật khẩu không đúng',

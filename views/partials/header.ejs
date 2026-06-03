@@ -54,9 +54,13 @@
     </div>
 
     <div class="topbar-avatar">
-      <div class="topbar-avatar-placeholder">
-        <%= user && user.fullName ? user.fullName.charAt(0).toUpperCase() : 'A' %>
-      </div>
+      <% if (user && user.avatar) { %>
+        <img src="<%= user.avatar %>" alt="Avatar" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+      <% } else { %>
+        <div class="topbar-avatar-placeholder">
+          <%= user && user.fullName ? user.fullName.charAt(0).toUpperCase() : 'A' %>
+        </div>
+      <% } %>
       <div class="d-none d-md-block">
         <div style="font-size: 13px; font-weight: 600;"><%= user ? user.fullName : 'Admin' %></div>
         <div style="font-size: 11px; color: var(--text-muted);">Quản trị viên</div>

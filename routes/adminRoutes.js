@@ -11,6 +11,8 @@ const priceController = require('../controllers/admin/priceController');
 const reportController = require('../controllers/admin/reportController');
 const maintenanceController = require('../controllers/admin/maintenanceController');
 const refundController = require('../controllers/admin/refundController');
+const profileController = require('../controllers/customer/profileController');
+const upload = require('../middlewares/upload');
 
 // All admin routes require authentication & admin role
 router.use(isAuthenticated, isAdmin);
@@ -45,8 +47,10 @@ router.delete('/stations/:id', stationController.deleteStation);
 // User management
 router.get('/users', userController.listUsers);
 router.put('/users/:id/toggle', userController.toggleUserStatus);
+router.put('/users/:id/promote', userController.promoteUser);
 router.delete('/users/:id', userController.deleteUser);
 router.get('/profile', userController.getProfile);
+router.post('/profile/avatar', upload.single('avatar'), profileController.updateAvatar);
 
 // Price management
 router.get('/prices', priceController.listPrices);
@@ -56,6 +60,7 @@ router.delete('/prices/:id', priceController.deletePrice);
 
 // Reports
 router.get('/reports', reportController.getReports);
+router.get('/reports/export', reportController.exportCSV);
 
 // Maintenance
 router.get('/maintenance', maintenanceController.listMaintenance);

@@ -26,6 +26,36 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    socket.on('new_notification', (data) => {
+      // Hiển thị Toast hoặc SweetAlert khi có thông báo mới
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+      Toast.fire({
+        icon: 'info',
+        title: 'Thông báo mới',
+        text: data.message
+      });
+      
+      // Update badge if exists
+      const badge = document.querySelector('.notification-badge');
+      if (badge) {
+        badge.style.display = 'flex';
+        badge.innerText = parseInt(badge.innerText || '0') + 1;
+      }
+    });
+  </script>
   <script src="/js/main.js"></script>
   <% if (typeof extraScripts !== 'undefined') { %>
     <%- extraScripts %>

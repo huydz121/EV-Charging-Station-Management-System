@@ -5,7 +5,15 @@
   <div class="card-body p-4">
     <div class="row">
       <div class="col-md-3 text-center mb-4">
-        <div class="topbar-avatar-placeholder mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem; margin-bottom: 20px;"><%= user ? user.fullName.charAt(0).toUpperCase() : 'A' %></div>
+        <div class="topbar-avatar-placeholder mx-auto mb-3" style="width: 120px; height: 120px; font-size: 3rem; margin-bottom: 20px; position: relative; overflow: hidden; cursor: pointer; border-radius: 50%;" onclick="document.getElementById('adminAvatarInput').click();" title="Bấm để đổi ảnh đại diện">
+          <% if (user && user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+          <% } else { %>
+            <%= user ? user.fullName.charAt(0).toUpperCase() : 'A' %>
+          <% } %>
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); font-size: 12px; color: white; text-align: center; padding: 4px 0;">Đổi ảnh</div>
+        </div>
+        <input type="file" id="adminAvatarInput" style="display: none;" accept="image/*" onchange="uploadAdminAvatar(this)">
         <h4 style="color: var(--text-light);"><%= user ? user.fullName : 'Admin EV Charge' %></h4>
         <p style="color: var(--text-muted);"><%= user ? (user.role === 'admin' ? 'Quản trị viên' : user.role) : 'Quản trị viên' %></p>
         <button class="btn btn-outline-success mt-2 disabled">Đang hoạt động</button>
@@ -44,3 +52,26 @@
     </div>
   </div>
 </div>
+
+<script>
+function uploadAdminAvatar(input) {
+  if (input.files && input.files[0]) {
+    const formData = new FormData();
+    formData.append('avatar', input.files[0]);
+    
+    fetch('/admin/profile/avatar', {
+      method: 'POST',
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || 'Lỗi tải ảnh');
+      }
+    })
+    .catch(err => alert('Lỗi kết nối'));
+  }
+}
+</script>

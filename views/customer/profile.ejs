@@ -2,9 +2,15 @@
 
 <% if (activePage === 'profile') { %>
 <div class="profile-header">
-  <div class="profile-avatar">
-    <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+  <div class="profile-avatar" style="position: relative; overflow: hidden; cursor: pointer;" onclick="document.getElementById('avatarInput').click();" title="Bấm để đổi ảnh đại diện">
+    <% if (user.avatar) { %>
+      <img src="<%= user.avatar %>" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
+    <% } else { %>
+      <%= user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U' %>
+    <% } %>
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.5); font-size: 10px; color: white; text-align: center; padding: 2px 0;">Đổi ảnh</div>
   </div>
+  <input type="file" id="avatarInput" style="display: none;" accept="image/*" onchange="uploadAvatar(this)">
   <div class="profile-name"><%= user.fullName %></div>
   <div class="profile-email"><%= user.email %></div>
 </div>
@@ -343,6 +349,27 @@ function showEditProfile() {
       if (data.success) location.reload();
       else alert(data.message);
     });
+  }
+}
+
+function uploadAvatar(input) {
+  if (input.files && input.files[0]) {
+    const formData = new FormData();
+    formData.append('avatar', input.files[0]);
+    
+    fetch('/customer/profile/avatar', {
+      method: 'POST',
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || 'Lỗi tải ảnh');
+      }
+    })
+    .catch(err => alert('Lỗi kết nối'));
   }
 }
 

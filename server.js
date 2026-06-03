@@ -3,6 +3,8 @@ const session = require('express-session');
 const { MongoStore } = require('connect-mongo');
 const methodOverride = require('method-override');
 const path = require('path');
+const http = require('http');
+const socketIo = require('socket.io');
 
 const config = require('./config');
 const connectDB = require('./config/database');
@@ -14,6 +16,17 @@ const customerRoutes = require('./routes/customerRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+app.set('io', io);
+
+// Socket.io connection
+io.on('connection', (socket) => {
+  console.log('🔗 Client connected via Socket.IO');
+  socket.on('disconnect', () => {
+    console.log('🔗 Client disconnected');
+  });
+});
 
 // Connect to MongoDB
 connectDB();
@@ -88,7 +101,7 @@ app.use((req, res) => {
 
 // Start server
 const PORT = config.port;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`
   ⚡ =============================================
   ⚡  EV Charging System
@@ -99,5 +112,4 @@ app.listen(PORT, () => {
   `);
 });
 
-module.exports = app;
-// Tuan 3
+module.exports = { app, server };

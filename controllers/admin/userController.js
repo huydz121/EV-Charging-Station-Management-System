@@ -21,6 +21,19 @@ exports.deleteUser = async (req, res) => {
   catch (error) { res.json({ success: false, message: error.message }); }
 };
 
+exports.promoteUser = async (req, res) => {
+  try {
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) return res.json({ success: false, message: 'User not found' });
+    
+    // Đảo ngược quyền hạn giữa admin và customer
+    targetUser.role = targetUser.role === 'admin' ? 'customer' : 'admin';
+    await targetUser.save();
+    
+    res.json({ success: true, role: targetUser.role });
+  } catch (error) { res.json({ success: false, message: error.message }); }
+};
+
 exports.getProfile = async (req, res) => {
   try {
     const userRole = req.session.user ? req.session.user.role : 'admin';

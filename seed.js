@@ -257,4 +257,3 @@ async function seed() {
 }
 
 seed();
-// Tuan 3

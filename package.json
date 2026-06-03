@@ -1,7 +1,7 @@
 {
   "name": "ev-charging-system",
   "version": "1.0.0",
-  "description": "EV Charging Station Management System - Tuan 3",
+  "description": "EV Charging Station Management System",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -33,6 +33,7 @@
     "pako": "^2.1.0",
     "pdf-parse": "^2.4.5",
     "plantuml-encoder": "^1.4.0",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.3"
   }
 }
